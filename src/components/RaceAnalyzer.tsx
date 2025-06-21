@@ -946,26 +946,26 @@ const RaceAnalyzer: React.FC = () => {
     <div className="space-y-2">
       {/* 初始介面 */}
       {!leftVideo && !rightVideo && (
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-lg font-semibold mb-3 text-gray-800">歡迎使用 RaceAna</h2>
-          <p className="text-sm text-gray-600 mb-4">
+        <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 shadow-neon p-4">
+          <h2 className="text-lg font-semibold mb-3 text-cyber-blue">歡迎使用 RaceAna</h2>
+          <p className="text-sm text-cyber-blue/80 mb-4">
             請選擇或輸入影片來源開始分析。您可以載入本地影片檔案或輸入 YouTube 網址。
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* 左側影片選擇 */}
             <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-700">我的錄影</h3>
+              <h3 className="text-sm font-medium text-cyber-purple">我的錄影</h3>
               <div className="flex space-x-2">
                 <button
                   onClick={() => setShowLeftInput(true)}
-                  className="flex-1 px-3 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
+                  className="flex-1 px-3 py-2 bg-gradient-to-r from-cyber-blue to-cyber-purple text-white rounded hover:from-cyber-purple hover:to-cyber-pink transition-all duration-300 text-sm font-medium shadow-neon hover:shadow-neon-purple"
                 >
                   輸入網址
                 </button>
                 <button
                   onClick={() => handleFileSelectWithAPI('left')}
-                  className="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm flex items-center"
+                  className="px-3 py-2 bg-gradient-to-r from-cyber-green to-cyber-blue text-white rounded hover:from-cyber-blue hover:to-cyber-green transition-all duration-300 text-sm flex items-center font-medium shadow-neon hover:shadow-neon"
                 >
                   <Upload size={16} className="mr-1" />
                   選擇檔案
@@ -975,17 +975,17 @@ const RaceAnalyzer: React.FC = () => {
             
             {/* 右側影片選擇 */}
             <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-700">專家錄影</h3>
+              <h3 className="text-sm font-medium text-cyber-orange">專家錄影</h3>
               <div className="flex space-x-2">
                 <button
                   onClick={() => setShowRightInput(true)}
-                  className="flex-1 px-3 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
+                  className="flex-1 px-3 py-2 bg-gradient-to-r from-cyber-orange to-cyber-pink text-white rounded hover:from-cyber-pink hover:to-cyber-orange transition-all duration-300 text-sm font-medium shadow-neon-orange hover:shadow-neon-pink"
                 >
                   輸入網址
                 </button>
                 <button
                   onClick={() => handleFileSelectWithAPI('right')}
-                  className="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm flex items-center"
+                  className="px-3 py-2 bg-gradient-to-r from-cyber-green to-cyber-orange text-white rounded hover:from-cyber-orange hover:to-cyber-green transition-all duration-300 text-sm flex items-center font-medium shadow-neon-orange hover:shadow-neon"
                 >
                   <Upload size={16} className="mr-1" />
                   選擇檔案
@@ -994,8 +994,8 @@ const RaceAnalyzer: React.FC = () => {
             </div>
           </div>
           
-          <div className="mt-4 p-2 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600">
+          <div className="mt-4 p-2 bg-cyber-dark/50 rounded-lg border border-cyber-blue/20">
+            <p className="text-xs text-cyber-blue/70">
               支援的影片格式：MP4, WebM, OGG, AVI, MOV, WMV<br/>
               您也可以輸入 YouTube 網址或本地檔案路徑
             </p>
@@ -1006,12 +1006,12 @@ const RaceAnalyzer: React.FC = () => {
       {/* 主要內容區域 - 並排佈局 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
         {/* 左側影片 */}
-        <div className="bg-white rounded-lg shadow-md p-2">
+        <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 shadow-neon p-2">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-semibold text-gray-800">我的錄影</h3>
+              <h3 className="text-sm font-semibold text-cyber-purple">我的錄影</h3>
               {leftVideo?.title && (
-                <span className="text-xs text-gray-500 truncate max-w-32" title={leftVideo.title}>
+                <span className="text-xs text-cyber-blue/70 truncate max-w-32" title={leftVideo.title}>
                   - {leftVideo.title}
                 </span>
               )}
@@ -1020,7 +1020,7 @@ const RaceAnalyzer: React.FC = () => {
               {leftVideo ? (
                 <button
                   onClick={() => handleChangeVideo('left')}
-                  className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200"
+                  className="px-2 py-1 text-xs bg-cyber-dark/50 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
                   title="更換影片"
                 >
                   換影片
@@ -1029,7 +1029,7 @@ const RaceAnalyzer: React.FC = () => {
               {leftBlobInvalid && leftVideo && leftVideo.type === 'local' && (
                 <button
                   onClick={() => handleReloadFile('left')}
-                  className="px-2 py-1 text-xs rounded hover:bg-blue-200 bg-red-100 text-red-600"
+                  className="px-2 py-1 text-xs rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300"
                   title="檔案載入失敗，點擊重新選擇檔案"
                 >
                   重新選擇
@@ -1046,17 +1046,17 @@ const RaceAnalyzer: React.FC = () => {
                   placeholder="影片路徑或 YouTube 網址"
                   value={leftVideoUrl}
                   onChange={(e) => setLeftVideoUrl(e.target.value)}
-                  className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="flex-1 px-2 py-1 bg-cyber-dark/50 border border-cyber-blue/30 rounded text-xs text-cyber-blue placeholder-cyber-blue/50 focus:outline-none focus:ring-1 focus:ring-cyber-blue focus:border-cyber-blue"
                 />
                 <button
                   onClick={() => handleVideoSubmit('left')}
-                  className="px-2 py-1 bg-primary-600 text-white rounded text-xs hover:bg-primary-700"
+                  className="px-2 py-1 bg-gradient-to-r from-cyber-blue to-cyber-purple text-white rounded text-xs hover:from-cyber-purple hover:to-cyber-pink transition-all duration-300 font-medium"
                 >
                   載入
                 </button>
                 <button
                   onClick={() => handleFileSelectWithAPI('left')}
-                  className="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 flex items-center relative z-10"
+                  className="px-2 py-1 bg-gradient-to-r from-cyber-green to-cyber-blue text-white rounded text-xs hover:from-cyber-blue hover:to-cyber-green transition-all duration-300 flex items-center relative z-10 font-medium"
                   title="選擇本地影片檔案"
                   style={{ pointerEvents: 'auto' }}
                 >
@@ -1065,7 +1065,7 @@ const RaceAnalyzer: React.FC = () => {
                 {showLeftInput && (
                   <button
                     onClick={() => setShowLeftInput(false)}
-                    className="px-2 py-1 bg-gray-200 text-gray-600 rounded text-xs hover:bg-gray-300"
+                    className="px-2 py-1 bg-cyber-dark/50 text-cyber-blue rounded text-xs hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
                   >
                     取消
                   </button>
@@ -1099,12 +1099,12 @@ const RaceAnalyzer: React.FC = () => {
         </div>
 
         {/* 右側影片 */}
-        <div className="bg-white rounded-lg shadow-md p-2">
+        <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-orange/20 shadow-neon-orange p-2">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-semibold text-gray-800">專家錄影</h3>
+              <h3 className="text-sm font-semibold text-cyber-orange">專家錄影</h3>
               {rightVideo?.title && (
-                <span className="text-xs text-gray-500 truncate max-w-32" title={rightVideo.title}>
+                <span className="text-xs text-cyber-orange/70 truncate max-w-32" title={rightVideo.title}>
                   - {rightVideo.title}
                 </span>
               )}
@@ -1113,7 +1113,7 @@ const RaceAnalyzer: React.FC = () => {
               {rightVideo ? (
                 <button
                   onClick={() => handleChangeVideo('right')}
-                  className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200"
+                  className="px-2 py-1 text-xs bg-cyber-dark/50 text-cyber-orange rounded hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300"
                   title="更換影片"
                 >
                   換影片
@@ -1122,7 +1122,7 @@ const RaceAnalyzer: React.FC = () => {
               {rightBlobInvalid && rightVideo && rightVideo.type === 'local' && (
                 <button
                   onClick={() => handleReloadFile('right')}
-                  className="px-2 py-1 text-xs rounded hover:bg-blue-200 bg-red-100 text-red-600"
+                  className="px-2 py-1 text-xs rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300"
                   title="檔案載入失敗，點擊重新選擇檔案"
                 >
                   重新選擇
@@ -1139,17 +1139,17 @@ const RaceAnalyzer: React.FC = () => {
                   placeholder="影片路徑或 YouTube 網址"
                   value={rightVideoUrl}
                   onChange={(e) => setRightVideoUrl(e.target.value)}
-                  className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="flex-1 px-2 py-1 bg-cyber-dark/50 border border-cyber-orange/30 rounded text-xs text-cyber-orange placeholder-cyber-orange/50 focus:outline-none focus:ring-1 focus:ring-cyber-orange focus:border-cyber-orange"
                 />
                 <button
                   onClick={() => handleVideoSubmit('right')}
-                  className="px-2 py-1 bg-primary-600 text-white rounded text-xs hover:bg-primary-700"
+                  className="px-2 py-1 bg-gradient-to-r from-cyber-orange to-cyber-pink text-white rounded text-xs hover:from-cyber-pink hover:to-cyber-orange transition-all duration-300 font-medium"
                 >
                   載入
                 </button>
                 <button
                   onClick={() => handleFileSelectWithAPI('right')}
-                  className="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 flex items-center relative z-10"
+                  className="px-2 py-1 bg-gradient-to-r from-cyber-green to-cyber-orange text-white rounded text-xs hover:from-cyber-orange hover:to-cyber-green transition-all duration-300 flex items-center relative z-10 font-medium"
                   title="選擇本地影片檔案"
                   style={{ pointerEvents: 'auto' }}
                 >
@@ -1158,7 +1158,7 @@ const RaceAnalyzer: React.FC = () => {
                 {showRightInput && (
                   <button
                     onClick={() => setShowRightInput(false)}
-                    className="px-2 py-1 bg-gray-200 text-gray-600 rounded text-xs hover:bg-gray-300"
+                    className="px-2 py-1 bg-cyber-dark/50 text-cyber-orange rounded text-xs hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300"
                   >
                     取消
                   </button>
@@ -1193,23 +1193,23 @@ const RaceAnalyzer: React.FC = () => {
       </div>
 
       {/* 播放控制 - 移到下方 */}
-      <div className="bg-white rounded-lg shadow-md p-3">
+      <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <h3 className="text-sm font-semibold text-gray-800">播放控制</h3>
+            <h3 className="text-sm font-semibold text-cyber-blue">播放控制</h3>
           </div>
           
           <div className="flex items-center space-x-2">
             <button
               onClick={handleGlobalPlayPause}
-              className="p-2 bg-primary-600 text-white rounded-full hover:bg-primary-700"
+              className="p-2 bg-cyber-blue/80 text-white rounded-full hover:bg-cyber-blue transition-all duration-300"
             >
               {isPlaying ? <Pause size={16} /> : <Play size={16} />}
             </button>
             
             <button
               onClick={handleStepBackward}
-              className="p-1.5 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className="p-1.5 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
               title="逐幀後退"
             >
               <SkipBack size={14} />
@@ -1217,7 +1217,7 @@ const RaceAnalyzer: React.FC = () => {
             
             <button
               onClick={handleStepForward}
-              className="p-1.5 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className="p-1.5 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
               title="逐幀前進"
             >
               <SkipForward size={14} />
@@ -1225,13 +1225,13 @@ const RaceAnalyzer: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-2">
-            <span className="text-xs text-gray-600">播放模式:</span>
+            <span className="text-xs text-cyber-blue/70">播放模式:</span>
             <button
               onClick={() => setSyncMode(!syncMode)}
-              className={`px-3 py-1.5 rounded text-xs font-medium ${
+              className={`px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 ${
                 syncMode 
-                  ? 'bg-green-100 text-green-700' 
-                  : 'bg-gray-100 text-gray-700'
+                  ? 'bg-cyber-green/90 text-white' 
+                  : 'bg-cyber-dark/70 text-cyber-blue border border-cyber-blue/30 hover:bg-cyber-blue/20'
               }`}
             >
               {syncMode ? '同步播放' : '獨立播放'}
@@ -1239,7 +1239,7 @@ const RaceAnalyzer: React.FC = () => {
             
             <button
               onClick={clearSessionData}
-              className="px-3 py-1.5 bg-red-100 text-red-700 rounded text-xs font-medium hover:bg-red-200"
+              className="px-3 py-1.5 bg-cyber-red/20 text-cyber-red rounded text-xs font-medium hover:bg-cyber-red/30 border border-cyber-red/30 transition-all duration-300"
               title="清除所有保存的資料"
             >
               清除資料
@@ -1249,37 +1249,37 @@ const RaceAnalyzer: React.FC = () => {
       </div>
 
       {/* 標籤管理 - 簡化版 */}
-      <div className="bg-white rounded-lg shadow-md p-2">
-        <h3 className="text-sm font-semibold mb-1 text-gray-800">標籤管理</h3>
+      <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-purple/20 p-2">
+        <h3 className="text-sm font-semibold mb-1 text-cyber-purple">標籤管理</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1.5">
           {markers.map((marker) => (
             <div
               key={marker.id}
-              className={`p-1.5 rounded border text-xs ${
+              className={`p-1.5 rounded border text-xs backdrop-blur-sm transition-all duration-300 ${
                 selectedMarker === marker.label 
-                  ? 'border-red-500 bg-red-50' 
-                  : 'border-gray-200 bg-gray-50'
+                  ? 'border-cyber-pink bg-cyber-pink/20' 
+                  : 'border-cyber-purple/30 bg-cyber-dark/50 hover:bg-cyber-purple/20'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
                 <span className={`px-1 py-0.5 rounded text-xs font-medium ${
                   selectedMarker === marker.label 
-                    ? 'bg-red-500 text-white' 
-                    : 'bg-blue-500 text-white'
+                    ? 'bg-cyber-pink/90 text-white' 
+                    : 'bg-cyber-purple/90 text-white'
                 }`}>
                   {marker.label}
                 </span>
                 <div className="flex space-x-1">
                   <button
                     onClick={() => setSelectedMarker(marker.label)}
-                    className="text-xs text-gray-600 hover:text-gray-800"
+                    className="text-xs text-cyber-blue hover:text-cyber-neon transition-colors duration-300"
                   >
                     {selectedMarker === marker.label ? '✓' : '選'}
                   </button>
                   <button
                     onClick={() => handleDeleteMarker(marker.id)}
-                    className="text-red-600 hover:text-red-800"
+                    className="text-cyber-red hover:text-cyber-pink transition-colors duration-300"
                   >
                     ×
                   </button>
@@ -1289,28 +1289,28 @@ const RaceAnalyzer: React.FC = () => {
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-1">
-                    <span className="text-xs text-gray-600">左:</span>
-                    <span className="text-xs text-gray-700">
+                    <span className="text-xs text-cyber-blue/70">左:</span>
+                    <span className="text-xs text-cyber-blue">
                       {marker.leftTime !== undefined ? formatTime(marker.leftTime) : '-'}
                     </span>
                     <button
                       onClick={() => handleJumpToMarker(marker, 'left')}
                       disabled={marker.leftTime === undefined}
-                      className="px-1 py-0.5 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50"
+                      className="px-1 py-0.5 text-xs bg-cyber-blue/30 text-cyber-blue rounded hover:bg-cyber-blue/40 disabled:opacity-50 transition-all duration-300"
                     >
                       跳
                     </button>
                   </div>
                   
                   <div className="flex items-center space-x-1">
-                    <span className="text-xs text-gray-600">右:</span>
-                    <span className="text-xs text-gray-700">
+                    <span className="text-xs text-cyber-orange/70">右:</span>
+                    <span className="text-xs text-cyber-orange">
                       {marker.rightTime !== undefined ? formatTime(marker.rightTime) : '-'}
                     </span>
                     <button
                       onClick={() => handleJumpToMarker(marker, 'right')}
                       disabled={marker.rightTime === undefined}
-                      className="px-1 py-0.5 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50"
+                      className="px-1 py-0.5 text-xs bg-cyber-orange/30 text-cyber-orange rounded hover:bg-cyber-orange/40 disabled:opacity-50 transition-all duration-300"
                     >
                       跳
                     </button>
@@ -1322,7 +1322,7 @@ const RaceAnalyzer: React.FC = () => {
                   <button
                     onClick={() => handleSyncJumpToMarker(marker)}
                     disabled={marker.leftTime === undefined || marker.rightTime === undefined}
-                    className="px-1.5 py-0.5 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-1.5 py-0.5 text-xs bg-cyber-green/90 text-white rounded hover:bg-cyber-green transition-all duration-300"
                     title="同時跳轉到左右兩邊的標籤時間點"
                   >
                     同步跳轉
@@ -1333,7 +1333,7 @@ const RaceAnalyzer: React.FC = () => {
           ))}
           
           {markers.length === 0 && (
-            <div className="col-span-full text-center text-gray-500 py-1 text-xs">
+            <div className="col-span-full text-center text-cyber-blue/50 py-1 text-xs">
               尚未新增任何標籤
             </div>
           )}

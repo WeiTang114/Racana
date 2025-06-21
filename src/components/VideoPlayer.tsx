@@ -167,10 +167,10 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
 
   if (!videoSource) {
     return (
-      <div className="flex items-center justify-center h-64 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300">
+      <div className="flex items-center justify-center h-64 bg-cyber-dark/50 rounded-lg border-2 border-dashed border-cyber-blue/30">
         <div className="text-center">
-          <div className="text-gray-400 text-6xl mb-4">📹</div>
-          <p className="text-gray-500">請選擇影片來源</p>
+          <div className="text-cyber-blue/50 text-6xl mb-4">📹</div>
+          <p className="text-cyber-blue/70">請選擇影片來源</p>
         </div>
       </div>
     )
@@ -178,7 +178,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
 
   return (
     <div className="space-y-2">
-      <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+      <div className="relative bg-black rounded-lg overflow-hidden border border-cyber-blue/20" style={{ aspectRatio: '16/9' }}>
         <ReactPlayer
           ref={playerRef}
           url={videoSource.url}
@@ -211,13 +211,13 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
       </div>
       
       {/* 獨立的標籤選單 */}
-      <div className="bg-gray-50 rounded-lg p-2">
+      <div className="bg-cyber-dark/70 rounded-lg p-2 border border-cyber-blue/20">
         <div className="flex items-center justify-between">
           {/* 左側：影片控制器 */}
           <div className="flex items-center space-x-1">
             <button
               onClick={handleStepBackward}
-              className="p-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className="p-1 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
               title="逐幀後退"
             >
               <SkipBack size={12} />
@@ -225,14 +225,14 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
             
             <button
               onClick={handleInternalPlayPause}
-              className="p-1.5 bg-primary-600 text-white rounded-full hover:bg-primary-700"
+              className="p-1.5 bg-cyber-blue/80 text-white rounded-full hover:bg-cyber-blue transition-all duration-300"
             >
               {isPlaying ? <Pause size={14} /> : <Play size={14} />}
             </button>
             
             <button
               onClick={handleStepForward}
-              className="p-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className="p-1 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
               title="逐幀前進"
             >
               <SkipForward size={12} />
@@ -241,16 +241,16 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
           
           {/* 右側：標籤設置 */}
           <div className="flex items-center space-x-1">
-            <div className="text-xs font-medium text-gray-700">設置標籤：</div>
+            <div className="text-xs font-medium text-cyber-purple">設置標籤：</div>
             <div className="flex space-x-1">
               {['1', '2', '3', '4', '5'].map((label) => (
                 <button
                   key={label}
                   onClick={() => onSetMarkerAtCurrentTime(label, currentTime)}
-                  className={`w-6 h-6 rounded-full text-xs font-medium transition-colors ${
+                  className={`w-6 h-6 rounded-full text-xs font-medium transition-all duration-300 ${
                     selectedMarker === label 
-                      ? 'bg-red-500 text-white' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-cyber-pink/90 text-white' 
+                      : 'bg-cyber-dark/70 text-cyber-blue border border-cyber-blue/30 hover:bg-cyber-blue/20'
                   }`}
                 >
                   {label}
@@ -263,7 +263,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
       
       {/* 視覺化時間軸 */}
       <div className="space-y-1">
-        <div className="flex justify-between text-xs text-gray-600">
+        <div className="flex justify-between text-xs text-cyber-blue/70">
           <span>{formatTime(currentTime)}</span>
           <span>{formatTime(duration)}</span>
         </div>
@@ -275,9 +275,9 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
             max={duration}
             value={currentTime}
             onChange={handleSeek}
-            className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+            className="w-full h-1 bg-cyber-dark/70 rounded-lg appearance-none cursor-pointer slider border border-cyber-blue/30"
             style={{
-              background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(currentTime / duration) * 100}%, #e5e7eb ${(currentTime / duration) * 100}%, #e5e7eb 100%)`
+              background: `linear-gradient(to right, #00d4ff 0%, #00d4ff ${(currentTime / duration) * 100}%, #16213e ${(currentTime / duration) * 100}%, #16213e 100%)`
             }}
           />
           
@@ -295,13 +295,13 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
                 onClick={() => onJumpToMarker(marker)}
                 title={`標籤 ${marker.label}: ${formatTime(markerTime)}`}
               >
-                <div className={`w-2 h-2 rounded-full border border-white shadow-sm hover:scale-110 transition-transform ${
-                  selectedMarker === marker.label ? 'bg-red-500' : 'bg-blue-500'
+                <div className={`w-2 h-2 rounded-full border border-cyber-blue hover:scale-110 transition-all duration-300 ${
+                  selectedMarker === marker.label ? 'bg-cyber-pink/90' : 'bg-cyber-blue'
                 }`}></div>
                 <div className={`absolute top-2 left-1/2 transform -translate-x-1/2 text-xs px-1 py-0.5 rounded whitespace-nowrap ${
                   selectedMarker === marker.label 
-                    ? 'bg-red-500 text-white' 
-                    : 'bg-blue-500 text-white'
+                    ? 'bg-cyber-pink/90 text-white' 
+                    : 'bg-sky-500 text-white'
                 }`}>
                   {marker.label}
                 </div>
