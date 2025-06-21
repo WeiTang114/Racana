@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Play, Pause, SkipBack, SkipForward, Tag, Trash2, Link, Unlink, Edit3 } from 'lucide-react'
+import { Play, Pause, SkipBack, SkipForward, Trash2, Link, Unlink, Edit3 } from 'lucide-react'
 import { VideoSource, Marker } from '../types'
 
 interface ControlPanelProps {
@@ -14,11 +14,9 @@ interface ControlPanelProps {
   leftDuration: number
   rightDuration: number
   markers: Marker[]
-  onAddMarker: (time: number, label: string, side: 'left' | 'right') => void
   onJumpToMarker: (marker: Marker, side: 'left' | 'right') => void
   onDeleteMarker: (markerId: number) => void
   onEditMarkerTime: (markerId: number, side: 'left' | 'right', time: number) => void
-  onSetMarkerAtCurrentTime: (label: string, side: 'left' | 'right') => void
   syncMode: boolean
   onSyncModeChange: (sync: boolean) => void
   selectedMarker: string
@@ -37,11 +35,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   leftDuration,
   rightDuration,
   markers,
-  onAddMarker,
   onJumpToMarker,
   onDeleteMarker,
   onEditMarkerTime,
-  onSetMarkerAtCurrentTime,
   syncMode,
   onSyncModeChange,
   selectedMarker,
@@ -209,7 +205,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
               min={0}
               max={leftDuration}
               value={leftCurrentTime}
-              onChange={(e) => onPlayPause(false)}
+              onChange={(_e) => onPlayPause(false)}
               className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
           </div>
@@ -223,7 +219,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
               min={0}
               max={rightDuration}
               value={rightCurrentTime}
-              onChange={(e) => onPlayPause(false)}
+              onChange={(_e) => onPlayPause(false)}
               className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
           </div>

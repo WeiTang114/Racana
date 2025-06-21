@@ -26,8 +26,6 @@ const RaceAnalyzer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [leftIsPlaying, setLeftIsPlaying] = useState(false)
   const [rightIsPlaying, setRightIsPlaying] = useState(false)
-  const [leftDuration, setLeftDuration] = useState(0)
-  const [rightDuration, setRightDuration] = useState(0)
   const [markers, setMarkers] = useState<Marker[]>([])
   const [syncMode, setSyncMode] = useState(true)
   const [selectedMarker, setSelectedMarker] = useState<string>('')
@@ -163,7 +161,7 @@ const RaceAnalyzer: React.FC = () => {
   }, [rightVideo])
 
   // 長按處理函數
-  const handleLongPress = (key: string, action: () => void) => {
+  const handleLongPress = (key: string, _action: () => void) => {
     console.log(`開始長按檢測: ${key}`)
     
     // 階段式長按邏輯
@@ -303,31 +301,19 @@ const RaceAnalyzer: React.FC = () => {
   // 同步播放邏輯（效能優化）
   useEffect(() => {
     let rafId: number | null = null
-    let lastTime = performance.now()
 
-    function step(now: number) {
+    function step(_now: number) {
       if (!isPlaying || !syncMode) return
-      const delta = (now - lastTime) / 1000
-      lastTime = now
       rafId = requestAnimationFrame(step)
     }
 
     if (isPlaying && syncMode) {
-      lastTime = performance.now()
       rafId = requestAnimationFrame(step)
     }
     return () => {
       if (rafId) cancelAnimationFrame(rafId)
     }
   }, [isPlaying, syncMode])
-
-  const handleLeftDurationChange = (duration: number) => {
-    setLeftDuration(duration)
-  }
-
-  const handleRightDurationChange = (duration: number) => {
-    setRightDuration(duration)
-  }
 
   const handleAddMarker = (time: number, label: string, side: 'left' | 'right') => {
     setMarkers(prev => {
@@ -365,14 +351,6 @@ const RaceAnalyzer: React.FC = () => {
 
   const handleDeleteMarker = (markerId: number) => {
     setMarkers(prev => prev.filter(m => m.id !== markerId))
-  }
-
-  const handleEditMarkerTime = (markerId: number, side: 'left' | 'right', time: number) => {
-    setMarkers(prev => prev.map(m => 
-      m.id === markerId 
-        ? { ...m, [`${side}Time`]: time }
-        : m
-    ))
   }
 
   const handleSetMarkerAtCurrentTime = (label: string, time: number, side: 'left' | 'right') => {
@@ -949,52 +927,10 @@ const RaceAnalyzer: React.FC = () => {
         <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 shadow-neon p-4">
           <h2 className="text-lg font-semibold mb-3 text-cyber-blue">歡迎使用 RaceAna</h2>
           <p className="text-sm text-cyber-blue/80 mb-4">
-            請選擇或輸入影片來源開始分析。您可以載入本地影片檔案或輸入 YouTube 網址。
+            請在下方選擇或輸入影片來源開始分析。您可以載入本地影片檔案或輸入 YouTube 網址。
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* 左側影片選擇 */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-cyber-purple">我的錄影</h3>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setShowLeftInput(true)}
-                  className="flex-1 px-3 py-2 bg-gradient-to-r from-cyber-blue to-cyber-purple text-white rounded hover:from-cyber-purple hover:to-cyber-pink transition-all duration-300 text-sm font-medium shadow-neon hover:shadow-neon-purple"
-                >
-                  輸入網址
-                </button>
-                <button
-                  onClick={() => handleFileSelectWithAPI('left')}
-                  className="px-3 py-2 bg-gradient-to-r from-cyber-green to-cyber-blue text-white rounded hover:from-cyber-blue hover:to-cyber-green transition-all duration-300 text-sm flex items-center font-medium shadow-neon hover:shadow-neon"
-                >
-                  <Upload size={16} className="mr-1" />
-                  選擇檔案
-                </button>
-              </div>
-            </div>
-            
-            {/* 右側影片選擇 */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-cyber-orange">專家錄影</h3>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setShowRightInput(true)}
-                  className="flex-1 px-3 py-2 bg-gradient-to-r from-cyber-orange to-cyber-pink text-white rounded hover:from-cyber-pink hover:to-cyber-orange transition-all duration-300 text-sm font-medium shadow-neon-orange hover:shadow-neon-pink"
-                >
-                  輸入網址
-                </button>
-                <button
-                  onClick={() => handleFileSelectWithAPI('right')}
-                  className="px-3 py-2 bg-gradient-to-r from-cyber-green to-cyber-orange text-white rounded hover:from-cyber-orange hover:to-cyber-green transition-all duration-300 text-sm flex items-center font-medium shadow-neon-orange hover:shadow-neon"
-                >
-                  <Upload size={16} className="mr-1" />
-                  選擇檔案
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-4 p-2 bg-cyber-dark/50 rounded-lg border border-cyber-blue/20">
+          <div className="p-2 bg-cyber-dark/50 rounded-lg border border-cyber-blue/20">
             <p className="text-xs text-cyber-blue/70">
               支援的影片格式：MP4, WebM, OGG, AVI, MOV, WMV<br/>
               您也可以輸入 YouTube 網址或本地檔案路徑
@@ -1050,13 +986,13 @@ const RaceAnalyzer: React.FC = () => {
                 />
                 <button
                   onClick={() => handleVideoSubmit('left')}
-                  className="px-2 py-1 bg-gradient-to-r from-cyber-blue to-cyber-purple text-white rounded text-xs hover:from-cyber-purple hover:to-cyber-pink transition-all duration-300 font-medium"
+                  className="px-2 py-1 bg-cyber-blue text-white rounded text-xs hover:bg-cyber-purple transition-all duration-300 font-medium"
                 >
                   載入
                 </button>
                 <button
                   onClick={() => handleFileSelectWithAPI('left')}
-                  className="px-2 py-1 bg-gradient-to-r from-cyber-green to-cyber-blue text-white rounded text-xs hover:from-cyber-blue hover:to-cyber-green transition-all duration-300 flex items-center relative z-10 font-medium"
+                  className="px-2 py-1 bg-cyber-green text-white rounded text-xs hover:bg-cyber-blue transition-all duration-300 flex items-center relative z-10 font-medium"
                   title="選擇本地影片檔案"
                   style={{ pointerEvents: 'auto' }}
                 >
@@ -1088,13 +1024,14 @@ const RaceAnalyzer: React.FC = () => {
             videoSource={leftVideo}
             isPlaying={leftIsPlaying}
             onPlayPause={setLeftIsPlaying}
-            onDurationChange={handleLeftDurationChange}
+            onDurationChange={() => {}}
             syncMode={syncMode}
             side="left"
             markers={markers}
             onJumpToMarker={(marker) => handleJumpToMarker(marker, 'left')}
             onSetMarkerAtCurrentTime={(label, time) => handleSetMarkerAtCurrentTime(label, time, 'left')}
             selectedMarker={selectedMarker}
+            jumpToTime={undefined}
           />
         </div>
 
@@ -1143,13 +1080,13 @@ const RaceAnalyzer: React.FC = () => {
                 />
                 <button
                   onClick={() => handleVideoSubmit('right')}
-                  className="px-2 py-1 bg-gradient-to-r from-cyber-orange to-cyber-pink text-white rounded text-xs hover:from-cyber-pink hover:to-cyber-orange transition-all duration-300 font-medium"
+                  className="px-2 py-1 bg-cyber-orange text-white rounded text-xs hover:bg-cyber-pink transition-all duration-300 font-medium"
                 >
                   載入
                 </button>
                 <button
                   onClick={() => handleFileSelectWithAPI('right')}
-                  className="px-2 py-1 bg-gradient-to-r from-cyber-green to-cyber-orange text-white rounded text-xs hover:from-cyber-orange hover:to-cyber-green transition-all duration-300 flex items-center relative z-10 font-medium"
+                  className="px-2 py-1 bg-cyber-green text-white rounded text-xs hover:bg-cyber-orange transition-all duration-300 flex items-center relative z-10 font-medium"
                   title="選擇本地影片檔案"
                   style={{ pointerEvents: 'auto' }}
                 >
@@ -1181,13 +1118,14 @@ const RaceAnalyzer: React.FC = () => {
             videoSource={rightVideo}
             isPlaying={rightIsPlaying}
             onPlayPause={setRightIsPlaying}
-            onDurationChange={handleRightDurationChange}
+            onDurationChange={() => {}}
             syncMode={syncMode}
             side="right"
             markers={markers}
             onJumpToMarker={(marker) => handleJumpToMarker(marker, 'right')}
             onSetMarkerAtCurrentTime={(label, time) => handleSetMarkerAtCurrentTime(label, time, 'right')}
             selectedMarker={selectedMarker}
+            jumpToTime={undefined}
           />
         </div>
       </div>
@@ -1230,8 +1168,8 @@ const RaceAnalyzer: React.FC = () => {
               onClick={() => setSyncMode(!syncMode)}
               className={`px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 ${
                 syncMode 
-                  ? 'bg-cyber-green/90 text-white' 
-                  : 'bg-cyber-dark/70 text-cyber-blue border border-cyber-blue/30 hover:bg-cyber-blue/20'
+                  ? 'bg-cyber-green/30 text-cyber-green border border-cyber-green/30' 
+                  : 'bg-cyber-dark/50 text-cyber-blue/70 border border-cyber-blue/20 hover:bg-cyber-blue/10'
               }`}
             >
               {syncMode ? '同步播放' : '獨立播放'}
@@ -1239,7 +1177,7 @@ const RaceAnalyzer: React.FC = () => {
             
             <button
               onClick={clearSessionData}
-              className="px-3 py-1.5 bg-cyber-red/20 text-cyber-red rounded text-xs font-medium hover:bg-cyber-red/30 border border-cyber-red/30 transition-all duration-300"
+              className="px-3 py-1.5 bg-cyber-dark/50 text-cyber-red/70 rounded text-xs font-medium hover:bg-cyber-red/20 border border-cyber-red/20 transition-all duration-300"
               title="清除所有保存的資料"
             >
               清除資料
