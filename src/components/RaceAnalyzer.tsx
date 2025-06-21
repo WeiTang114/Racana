@@ -64,25 +64,6 @@ const RaceAnalyzer: React.FC = () => {
   const longPressTimeoutsRef = useRef<Map<string, number>>(new Map())
   const pressedKeysRef = useRef<Set<string>>(new Set())
 
-  // Session Storage 功能
-  const saveToSession = (key: string, data: any) => {
-    try {
-      sessionStorage.setItem(key, JSON.stringify(data))
-    } catch (error) {
-      console.warn('無法保存到 sessionStorage:', error)
-    }
-  }
-
-  const loadFromSession = (key: string) => {
-    try {
-      const data = sessionStorage.getItem(key)
-      return data ? JSON.parse(data) : null
-    } catch (error) {
-      console.warn('無法從 sessionStorage 載入:', error)
-      return null
-    }
-  }
-
   // 載入保存的資料
   useEffect(() => {
     const savedLeftVideo = loadFromSession('leftVideo')
@@ -428,9 +409,25 @@ const RaceAnalyzer: React.FC = () => {
     const file = event.target.files?.[0]
     if (file) {
       // 檢查是否為影片檔案
-      const videoTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/mov', 'video/wmv']
-      if (!videoTypes.includes(file.type)) {
-        alert('請選擇有效的影片檔案格式 (MP4, WebM, OGG, AVI, MOV, WMV)')
+      const videoTypes = [
+        'video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/wmv',
+        'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv',
+        'video/x-matroska', 'video/3gpp', 'video/3gpp2'
+      ]
+      
+      // 檢查檔案副檔名
+      const fileExtension = file.name.toLowerCase().split('.').pop()
+      const supportedExtensions = ['mp4', 'webm', 'ogg', 'avi', 'mov', 'wmv', 'mkv', '3gp', '3g2']
+      
+      console.log('檔案資訊:', {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        extension: fileExtension
+      })
+      
+      if (!videoTypes.includes(file.type) && !supportedExtensions.includes(fileExtension || '')) {
+        alert(`請選擇有效的影片檔案格式 (MP4, WebM, OGG, AVI, MOV, WMV, MKV, 3GP)\n\n檔案類型: ${file.type}\n檔案副檔名: ${fileExtension}`)
         return
       }
 
@@ -874,9 +871,25 @@ const RaceAnalyzer: React.FC = () => {
       const file = await fileHandle.getFile()
 
       // 檢查是否為影片檔案
-      const videoTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/mov', 'video/wmv']
-      if (!videoTypes.includes(file.type)) {
-        alert('請選擇有效的影片檔案格式 (MP4, WebM, OGG, AVI, MOV, WMV)')
+      const videoTypes = [
+        'video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/wmv',
+        'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv',
+        'video/x-matroska', 'video/3gpp', 'video/3gpp2'
+      ]
+      
+      // 檢查檔案副檔名
+      const fileExtension = file.name.toLowerCase().split('.').pop()
+      const supportedExtensions = ['mp4', 'webm', 'ogg', 'avi', 'mov', 'wmv', 'mkv', '3gp', '3g2']
+      
+      console.log('檔案資訊 (API):', {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        extension: fileExtension
+      })
+      
+      if (!videoTypes.includes(file.type) && !supportedExtensions.includes(fileExtension || '')) {
+        alert(`請選擇有效的影片檔案格式 (MP4, WebM, OGG, AVI, MOV, WMV, MKV, 3GP)\n\n檔案類型: ${file.type}\n檔案副檔名: ${fileExtension}`)
         return
       }
 
@@ -910,12 +923,30 @@ const RaceAnalyzer: React.FC = () => {
     }
   }
 
+  // Session Storage 功能
+  const saveToSession = (key: string, data: any) => {
+    try {
+      sessionStorage.setItem(key, JSON.stringify(data))
+    } catch (error) {
+      console.warn('無法保存到 sessionStorage:', error)
+    }
+  }
+
+  const loadFromSession = (key: string) => {
+    try {
+      const data = sessionStorage.getItem(key)
+      return data ? JSON.parse(data) : null
+    } catch (error) {
+      console.warn('無法從 sessionStorage 載入:', error)
+      return null
+    }
+  }
+
   return (
     <div className="space-y-3">
       {/* 初始檔案選擇區域 - 當沒有影片載入時顯示 */}
       {!leftVideo && !rightVideo && (
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">歡迎使用 RaceAna 賽車分析工具</h3>
           <p className="text-gray-600 mb-6">請選擇要分析的影片檔案</p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -988,7 +1019,7 @@ const RaceAnalyzer: React.FC = () => {
                   換影片
                 </button>
               ) : null}
-              {leftBlobInvalid && (
+              {leftBlobInvalid && leftVideo && (
                 <button
                   onClick={() => handleReloadFile('left')}
                   className="px-2 py-1 text-xs rounded hover:bg-blue-200 bg-red-100 text-red-600"
@@ -1081,7 +1112,7 @@ const RaceAnalyzer: React.FC = () => {
                   換影片
                 </button>
               ) : null}
-              {rightBlobInvalid && (
+              {rightBlobInvalid && rightVideo && (
                 <button
                   onClick={() => handleReloadFile('right')}
                   className="px-2 py-1 text-xs rounded hover:bg-blue-200 bg-red-100 text-red-600"
@@ -1157,7 +1188,9 @@ const RaceAnalyzer: React.FC = () => {
       {/* 播放控制 - 移到下方 */}
       <div className="bg-white rounded-lg shadow-md p-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-800">播放控制</h3>
+          <div className="flex items-center space-x-2">
+            <h3 className="text-sm font-semibold text-gray-800">播放控制</h3>
+          </div>
           
           <div className="flex items-center space-x-2">
             <button
