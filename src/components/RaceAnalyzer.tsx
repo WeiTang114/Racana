@@ -1019,7 +1019,7 @@ const RaceAnalyzer: React.FC = () => {
                   換影片
                 </button>
               ) : null}
-              {leftBlobInvalid && leftVideo && (
+              {leftBlobInvalid && leftVideo && leftVideo.type === 'local' && (
                 <button
                   onClick={() => handleReloadFile('left')}
                   className="px-2 py-1 text-xs rounded hover:bg-blue-200 bg-red-100 text-red-600"
@@ -1112,7 +1112,7 @@ const RaceAnalyzer: React.FC = () => {
                   換影片
                 </button>
               ) : null}
-              {rightBlobInvalid && rightVideo && (
+              {rightBlobInvalid && rightVideo && rightVideo.type === 'local' && (
                 <button
                   onClick={() => handleReloadFile('right')}
                   className="px-2 py-1 text-xs rounded hover:bg-blue-200 bg-red-100 text-red-600"
