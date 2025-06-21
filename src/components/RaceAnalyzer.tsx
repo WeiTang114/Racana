@@ -20,6 +20,128 @@ const RaceAnalyzer: React.FC = () => {
   const [showRightInput, setShowRightInput] = useState(false)
   const leftPlayerRef = useRef<VideoPlayerHandle>(null)
   const rightPlayerRef = useRef<VideoPlayerHandle>(null)
+  
+  // 長按檢測狀態
+  const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set())
+  const longPressTimeoutsRef = useRef<Map<string, number>>(new Map())
+  const pressedKeysRef = useRef<Set<string>>(new Set())
+
+  // 長按處理函數
+  const handleLongPress = (key: string, action: () => void) => {
+    console.log(`開始長按檢測: ${key}`)
+    
+    // 階段式長按邏輯
+    const stages = [
+      { time: 500, jump: 1, description: '0.5秒→快進1秒' },
+      { time: 1000, jump: 1, description: '1秒→再快進1秒' },
+      { time: 1500, jump: 2, description: '1.5秒→快進2秒' },
+      { time: 2000, jump: 5, description: '2秒→快進5秒' }
+    ]
+    
+    const executeAction = (jumpSeconds: number) => {
+      console.log(`執行跳轉: ${jumpSeconds}秒`)
+      // 根據跳轉秒數執行不同的動作
+      if (jumpSeconds === 1) {
+        // 0.5秒和1秒時使用逐幀動作
+        switch (key) {
+          case 'a':
+            if (leftPlayerRef.current) leftPlayerRef.current.stepBackward()
+            break
+          case 'd':
+            if (leftPlayerRef.current) leftPlayerRef.current.stepForward()
+            break
+          case 'j':
+            if (rightPlayerRef.current) rightPlayerRef.current.stepBackward()
+            break
+          case 'l':
+            if (rightPlayerRef.current) rightPlayerRef.current.stepForward()
+            break
+          case 'arrowleft':
+            if (leftPlayerRef.current) leftPlayerRef.current.stepBackward()
+            if (rightPlayerRef.current) rightPlayerRef.current.stepBackward()
+            break
+          case 'arrowright':
+            if (leftPlayerRef.current) leftPlayerRef.current.stepForward()
+            if (rightPlayerRef.current) rightPlayerRef.current.stepForward()
+            break
+        }
+      } else {
+        // 根據按鍵執行對應的跳轉動作
+        switch (key) {
+          case 'a':
+            if (leftPlayerRef.current) leftPlayerRef.current.seekTo(-jumpSeconds, true)
+            break
+          case 'd':
+            if (leftPlayerRef.current) leftPlayerRef.current.seekTo(jumpSeconds, true)
+            break
+          case 'j':
+            if (rightPlayerRef.current) rightPlayerRef.current.seekTo(-jumpSeconds, true)
+            break
+          case 'l':
+            if (rightPlayerRef.current) rightPlayerRef.current.seekTo(jumpSeconds, true)
+            break
+          case 'arrowleft':
+            if (leftPlayerRef.current) leftPlayerRef.current.seekTo(-jumpSeconds, true)
+            if (rightPlayerRef.current) rightPlayerRef.current.seekTo(-jumpSeconds, true)
+            break
+          case 'arrowright':
+            if (leftPlayerRef.current) leftPlayerRef.current.seekTo(jumpSeconds, true)
+            if (rightPlayerRef.current) rightPlayerRef.current.seekTo(jumpSeconds, true)
+            break
+        }
+      }
+    }
+    
+    // 設置階段式觸發
+    stages.forEach((stage, index) => {
+      const timeoutId = window.setTimeout(() => {
+        if (pressedKeysRef.current.has(key)) {
+          console.log(`階段 ${index + 1}: ${stage.description}`)
+          executeAction(stage.jump)
+          
+          // 如果是第4個階段（2秒），立即開始持續跳轉
+          if (index === 3) {
+            console.log(`開始持續跳轉: 每秒5秒`)
+            const repeatTimeoutId = window.setInterval(() => {
+              if (pressedKeysRef.current.has(key)) {
+                console.log(`持續跳轉: 5秒`)
+                executeAction(5)
+              } else {
+                console.log(`停止持續跳轉`)
+                clearInterval(repeatTimeoutId)
+                longPressTimeoutsRef.current.delete(`${key}_continuous`)
+              }
+            }, 1000) // 每秒執行一次
+            
+            longPressTimeoutsRef.current.set(`${key}_continuous`, repeatTimeoutId)
+          }
+        }
+      }, stage.time)
+      
+      longPressTimeoutsRef.current.set(`${key}_stage_${index}`, timeoutId)
+    })
+  }
+
+  // 清理長按計時器
+  const clearLongPress = (key: string) => {
+    console.log(`清理長按: ${key}`)
+    
+    // 清理所有階段的計時器
+    for (let i = 0; i < 4; i++) {
+      const timeoutId = longPressTimeoutsRef.current.get(`${key}_stage_${i}`)
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+        longPressTimeoutsRef.current.delete(`${key}_stage_${i}`)
+      }
+    }
+    
+    // 清理持續跳轉的計時器
+    const continuousId = longPressTimeoutsRef.current.get(`${key}_continuous`)
+    if (continuousId) {
+      clearInterval(continuousId)
+      longPressTimeoutsRef.current.delete(`${key}_continuous`)
+    }
+  }
 
   // 格式化時間函數
   const formatTime = (time: number): string => {
@@ -175,6 +297,19 @@ const RaceAnalyzer: React.FC = () => {
     setIsPlaying(false)
   }
 
+  // 五秒跳轉控制
+  const handleJumpForward = () => {
+    if (leftPlayerRef.current) leftPlayerRef.current.seekTo(5, true)
+    if (rightPlayerRef.current) rightPlayerRef.current.seekTo(5, true)
+    setIsPlaying(false)
+  }
+
+  const handleJumpBackward = () => {
+    if (leftPlayerRef.current) leftPlayerRef.current.seekTo(-5, true)
+    if (rightPlayerRef.current) rightPlayerRef.current.seekTo(-5, true)
+    setIsPlaying(false)
+  }
+
   // 左影片控制
   const handleLeftStepForward = () => {
     if (leftPlayerRef.current) leftPlayerRef.current.stepForward()
@@ -183,6 +318,16 @@ const RaceAnalyzer: React.FC = () => {
 
   const handleLeftStepBackward = () => {
     if (leftPlayerRef.current) leftPlayerRef.current.stepBackward()
+    setLeftIsPlaying(false)
+  }
+
+  const handleLeftJumpForward = () => {
+    if (leftPlayerRef.current) leftPlayerRef.current.seekTo(5, true)
+    setLeftIsPlaying(false)
+  }
+
+  const handleLeftJumpBackward = () => {
+    if (leftPlayerRef.current) leftPlayerRef.current.seekTo(-5, true)
     setLeftIsPlaying(false)
   }
 
@@ -204,6 +349,17 @@ const RaceAnalyzer: React.FC = () => {
     setRightIsPlaying(false)
   }
 
+  const handleRightJumpForward = () => {
+    if (rightPlayerRef.current) rightPlayerRef.current.seekTo(5, true)
+    setRightIsPlaying(false)
+  }
+
+  const handleRightJumpBackward = () => {
+    if (rightPlayerRef.current) rightPlayerRef.current.seekTo(-5, true)
+    setRightIsPlaying(false)
+  }
+
+  // 右影片控制
   const handleRightPlayPause = () => {
     const newRightPlaying = !rightIsPlaying
     setRightIsPlaying(newRightPlaying)
@@ -226,18 +382,42 @@ const RaceAnalyzer: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // 如果正在輸入框中，不觸發快速鍵
-      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+      if (event.target instanceof HTMLInputElement) {
+        const input = event.target as HTMLInputElement
+        // 如果是時間軸（range input），允許快捷鍵
+        if (input.type === 'range') {
+          // 允許快捷鍵，不返回
+        } else {
+          // 其他輸入框（text, textarea等）不觸發快捷鍵
+          return
+        }
+      } else if (event.target instanceof HTMLTextAreaElement) {
         return
       }
 
-      switch (event.key.toLowerCase()) {
+      const key = event.key.toLowerCase()
+      
+      // 檢查是否已經按下
+      if (pressedKeys.has(key)) {
+        return
+      }
+
+      // 添加到按下的鍵集合
+      setPressedKeys(prev => new Set(prev).add(key))
+      pressedKeysRef.current.add(key)
+
+      switch (key) {
         case 'a': // 左影片逐幀後退
           event.preventDefault()
           handleLeftStepBackward()
+          // 設置長按檢測
+          handleLongPress(key, handleLeftJumpBackward)
           break
         case 'd': // 左影片逐幀前進
           event.preventDefault()
           handleLeftStepForward()
+          // 設置長按檢測
+          handleLongPress(key, handleLeftJumpForward)
           break
         case 's': // 左影片播放/暫停
           event.preventDefault()
@@ -247,10 +427,14 @@ const RaceAnalyzer: React.FC = () => {
         case 'j': // 右影片逐幀後退
           event.preventDefault()
           handleRightStepBackward()
+          // 設置長按檢測
+          handleLongPress(key, handleRightJumpBackward)
           break
         case 'l': // 右影片逐幀前進
           event.preventDefault()
           handleRightStepForward()
+          // 設置長按檢測
+          handleLongPress(key, handleRightJumpForward)
           break
         case 'k': // 右影片播放/暫停
           event.preventDefault()
@@ -264,17 +448,40 @@ const RaceAnalyzer: React.FC = () => {
         case 'arrowleft': // 左箭頭：兩邊一起逐幀後退
           event.preventDefault()
           handleStepBackward()
+          // 設置長按檢測
+          handleLongPress(key, handleJumpBackward)
           break
         case 'arrowright': // 右箭頭：兩邊一起逐幀前進
           event.preventDefault()
           handleStepForward()
+          // 設置長按檢測
+          handleLongPress(key, handleJumpForward)
           break
       }
     }
 
+    const handleKeyUp = (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase()
+      
+      // 從按下的鍵集合中移除
+      setPressedKeys(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(key)
+        return newSet
+      })
+      pressedKeysRef.current.delete(key)
+      
+      // 清理長按計時器
+      clearLongPress(key)
+    }
+
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isPlaying, leftIsPlaying, rightIsPlaying, syncMode])
+    window.addEventListener('keyup', handleKeyUp)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
+    }
+  }, [isPlaying, leftIsPlaying, rightIsPlaying, syncMode, pressedKeys])
 
   return (
     <div className="space-y-3">

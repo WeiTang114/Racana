@@ -4,7 +4,7 @@ import { VideoSource, VideoSide, Marker } from '../types'
 import { Play, Pause, SkipBack, SkipForward } from 'lucide-react'
 
 export interface VideoPlayerHandle {
-  seekTo: (time: number) => void
+  seekTo: (time: number, relative?: boolean) => void
   stepForward: () => void
   stepBackward: () => void
 }
@@ -49,10 +49,12 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
 
   // 暴露 seekTo 方法給父層
   useImperativeHandle(ref, () => ({
-    seekTo: (time: number) => {
+    seekTo: (time: number, relative?: boolean) => {
       if (playerRef.current) {
-        playerRef.current.seekTo(time, 'seconds')
-        setCurrentTime(time)
+        const targetTime = relative ? currentTime + time : time
+        const clampedTime = Math.max(0, Math.min(targetTime, duration))
+        playerRef.current.seekTo(clampedTime, 'seconds')
+        setCurrentTime(clampedTime)
       }
     },
     stepForward: () => {
@@ -206,52 +208,55 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
             }
           }}
         />
-        
-        {/* 自訂播放控制按鈕 */}
-        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 bg-black bg-opacity-50 rounded-lg p-2">
-          <button
-            onClick={handleStepBackward}
-            className="p-1 bg-white bg-opacity-20 text-white rounded hover:bg-opacity-30"
-            title="逐幀後退"
-          >
-            <SkipBack size={14} />
-          </button>
-          
-          <button
-            onClick={handleInternalPlayPause}
-            className="p-2 bg-white bg-opacity-20 text-white rounded-full hover:bg-opacity-30"
-          >
-            {isPlaying ? <Pause size={16} /> : <Play size={16} />}
-          </button>
-          
-          <button
-            onClick={handleStepForward}
-            className="p-1 bg-white bg-opacity-20 text-white rounded hover:bg-opacity-30"
-            title="逐幀前進"
-          >
-            <SkipForward size={14} />
-          </button>
-        </div>
       </div>
       
       {/* 獨立的標籤選單 */}
       <div className="bg-gray-50 rounded-lg p-3">
-        <div className="flex items-center space-x-2">
-          <div className="text-xs font-medium text-gray-700">設置標籤：</div>
-          <div className="flex space-x-2">
-            {['1', '2', '3', '4', '5'].map((label) => (
-              <button
-                key={label}
-                onClick={() => onSetMarkerAtCurrentTime(label, currentTime)}
-                className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
-                  selectedMarker === label 
-                    ? 'bg-red-500 text-white' 
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+        <div className="flex items-center justify-between">
+          {/* 左側：影片控制器 */}
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleStepBackward}
+              className="p-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              title="逐幀後退"
+            >
+              <SkipBack size={14} />
+            </button>
+            
+            <button
+              onClick={handleInternalPlayPause}
+              className="p-2 bg-primary-600 text-white rounded-full hover:bg-primary-700"
+            >
+              {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+            </button>
+            
+            <button
+              onClick={handleStepForward}
+              className="p-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              title="逐幀前進"
+            >
+              <SkipForward size={14} />
+            </button>
+          </div>
+          
+          {/* 右側：標籤設置 */}
+          <div className="flex items-center space-x-2">
+            <div className="text-xs font-medium text-gray-700">設置標籤：</div>
+            <div className="flex space-x-2">
+              {['1', '2', '3', '4', '5'].map((label) => (
+                <button
+                  key={label}
+                  onClick={() => onSetMarkerAtCurrentTime(label, currentTime)}
+                  className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
+                    selectedMarker === label 
+                      ? 'bg-red-500 text-white' 
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
