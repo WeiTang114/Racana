@@ -310,12 +310,6 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
           })}
         </div>
       </div>
-      
-      {videoSource.title && (
-        <div className="text-xs text-gray-600">
-          <strong>標題：</strong> {videoSource.title}
-        </div>
-      )}
     </div>
   )
 })

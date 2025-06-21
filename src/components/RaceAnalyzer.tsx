@@ -1,7 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react'
 import VideoPlayer, { VideoPlayerHandle } from './VideoPlayer'
 import { VideoSource, Marker } from '../types'
-import { Pause, Play, SkipBack, SkipForward } from 'lucide-react'
+import { Pause, Play, SkipBack, SkipForward, Upload } from 'lucide-react'
+
+// File System Access API 類型定義
+declare global {
+  interface Window {
+    showOpenFilePicker(options?: {
+      types?: Array<{
+        description: string
+        accept: Record<string, string[]>
+      }>
+      multiple?: boolean
+    }): Promise<FileSystemFileHandle[]>
+  }
+}
+
+interface FileSystemFileHandle {
+  getFile(): Promise<File>
+}
 
 const RaceAnalyzer: React.FC = () => {
   const [leftVideo, setLeftVideo] = useState<VideoSource | null>(null)
@@ -18,8 +35,29 @@ const RaceAnalyzer: React.FC = () => {
   const [rightVideoUrl, setRightVideoUrl] = useState('')
   const [showLeftInput, setShowLeftInput] = useState(false)
   const [showRightInput, setShowRightInput] = useState(false)
+  
+  // 保存原始檔案資訊，用於重新載入
+  const [leftOriginalFile, setLeftOriginalFile] = useState<File | null>(null)
+  const [rightOriginalFile, setRightOriginalFile] = useState<File | null>(null)
+  
+  // File System Access API 支援
+  const [leftFileHandle, setLeftFileHandle] = useState<FileSystemFileHandle | null>(null)
+  const [rightFileHandle, setRightFileHandle] = useState<FileSystemFileHandle | null>(null)
+  
+  // 檢測 blob URL 是否失效
+  const [leftBlobInvalid, setLeftBlobInvalid] = useState(false)
+  const [rightBlobInvalid, setRightBlobInvalid] = useState(false)
+  
   const leftPlayerRef = useRef<VideoPlayerHandle>(null)
   const rightPlayerRef = useRef<VideoPlayerHandle>(null)
+  
+  // 檔案選擇器 refs
+  const leftFileInputRef = useRef<HTMLInputElement>(null)
+  const rightFileInputRef = useRef<HTMLInputElement>(null)
+  
+  // 初始檔案選擇區域的 refs
+  const initialLeftFileInputRef = useRef<HTMLInputElement>(null)
+  const initialRightFileInputRef = useRef<HTMLInputElement>(null)
   
   // 長按檢測狀態
   const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set())
@@ -54,9 +92,17 @@ const RaceAnalyzer: React.FC = () => {
 
     if (savedLeftVideo) {
       setLeftVideo(savedLeftVideo)
+      // 如果左側有本地影片，標記為需要重新載入
+      if (savedLeftVideo.type === 'local' && savedLeftVideo.url.startsWith('blob:')) {
+        setLeftBlobInvalid(true)
+      }
     }
     if (savedRightVideo) {
       setRightVideo(savedRightVideo)
+      // 如果右側有本地影片，標記為需要重新載入
+      if (savedRightVideo.type === 'local' && savedRightVideo.url.startsWith('blob:')) {
+        setRightBlobInvalid(true)
+      }
     }
     if (savedMarkers) {
       setMarkers(savedMarkers)
@@ -90,6 +136,50 @@ const RaceAnalyzer: React.FC = () => {
   useEffect(() => {
     saveToSession('syncMode', syncMode)
   }, [syncMode])
+
+  // 定期檢測 blob URL 有效性
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (leftVideo?.type === 'local' && leftVideo.url.startsWith('blob:')) {
+        checkBlobValidity('left')
+      }
+      if (rightVideo?.type === 'local' && rightVideo.url.startsWith('blob:')) {
+        checkBlobValidity('right')
+      }
+    }, 5000) // 每5秒檢測一次
+
+    return () => clearInterval(interval)
+  }, [leftVideo, rightVideo])
+
+  // 清理本地檔案 URL
+  useEffect(() => {
+    return () => {
+      // 組件卸載時清理所有本地檔案 URL
+      if (leftVideo?.type === 'local' && leftVideo.url.startsWith('blob:')) {
+        URL.revokeObjectURL(leftVideo.url)
+      }
+      if (rightVideo?.type === 'local' && rightVideo.url.startsWith('blob:')) {
+        URL.revokeObjectURL(rightVideo.url)
+      }
+    }
+  }, [])
+
+  // 當影片變更時清理舊的 URL
+  useEffect(() => {
+    return () => {
+      if (leftVideo?.type === 'local' && leftVideo.url.startsWith('blob:')) {
+        URL.revokeObjectURL(leftVideo.url)
+      }
+    }
+  }, [leftVideo])
+
+  useEffect(() => {
+    return () => {
+      if (rightVideo?.type === 'local' && rightVideo.url.startsWith('blob:')) {
+        URL.revokeObjectURL(rightVideo.url)
+      }
+    }
+  }, [rightVideo])
 
   // 長按處理函數
   const handleLongPress = (key: string, action: () => void) => {
@@ -306,6 +396,176 @@ const RaceAnalyzer: React.FC = () => {
 
   const handleSetMarkerAtCurrentTime = (label: string, time: number, side: 'left' | 'right') => {
     handleAddMarker(time, label, side)
+  }
+
+  // 檔案選擇處理函數
+  const handleFileSelect = (side: 'left' | 'right') => {
+    // 優先使用主要內容區域的檔案輸入元素
+    let fileInput: HTMLInputElement | null = null
+    
+    if (side === 'left') {
+      // 優先使用主要內容區域的 ref
+      fileInput = leftFileInputRef.current
+      // 如果主要內容區域的 ref 不存在，則使用初始區域的 ref
+      if (!fileInput) {
+        fileInput = initialLeftFileInputRef.current
+      }
+    } else {
+      // 優先使用主要內容區域的 ref
+      fileInput = rightFileInputRef.current
+      // 如果主要內容區域的 ref 不存在，則使用初始區域的 ref
+      if (!fileInput) {
+        fileInput = initialRightFileInputRef.current
+      }
+    }
+    
+    if (fileInput) {
+      fileInput.click()
+    }
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, side: 'left' | 'right') => {
+    const file = event.target.files?.[0]
+    if (file) {
+      // 檢查是否為影片檔案
+      const videoTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/mov', 'video/wmv']
+      if (!videoTypes.includes(file.type)) {
+        alert('請選擇有效的影片檔案格式 (MP4, WebM, OGG, AVI, MOV, WMV)')
+        return
+      }
+
+      // 創建本地檔案 URL
+      const videoUrl = URL.createObjectURL(file)
+      const videoSource: VideoSource = {
+        type: 'local',
+        url: videoUrl,
+        title: file.name
+      }
+
+      if (side === 'left') {
+        setLeftVideo(videoSource)
+        setLeftOriginalFile(file) // 保存原始檔案
+        setLeftBlobInvalid(false) // 重置失效狀態
+        setLeftVideoUrl('')
+        setShowLeftInput(false)
+      } else {
+        setRightVideo(videoSource)
+        setRightOriginalFile(file) // 保存原始檔案
+        setRightBlobInvalid(false) // 重置失效狀態
+        setRightVideoUrl('')
+        setShowRightInput(false)
+      }
+
+      // 清理檔案選擇器
+      event.target.value = ''
+    }
+  }
+
+  // 重新載入檔案功能
+  const handleReloadFile = async (side: 'left' | 'right') => {
+    const originalFile = side === 'left' ? leftOriginalFile : rightOriginalFile
+    const fileHandle = side === 'left' ? leftFileHandle : rightFileHandle
+    
+    // 優先使用 File System Access API 的檔案句柄
+    if (fileHandle) {
+      try {
+        const file = await fileHandle.getFile()
+        const videoUrl = URL.createObjectURL(file)
+        const videoSource: VideoSource = {
+          type: 'local',
+          url: videoUrl,
+          title: file.name
+        }
+
+        if (side === 'left') {
+          setLeftVideo(videoSource)
+          setLeftOriginalFile(file)
+          setLeftBlobInvalid(false)
+        } else {
+          setRightVideo(videoSource)
+          setRightOriginalFile(file)
+          setRightBlobInvalid(false)
+        }
+        return
+      } catch (error) {
+        console.error('使用檔案句柄重新載入失敗:', error)
+        // 如果檔案句柄失效，清除它
+        if (side === 'left') {
+          setLeftFileHandle(null)
+        } else {
+          setRightFileHandle(null)
+        }
+      }
+    }
+    
+    // 檢查 originalFile 是否為有效的 File 物件
+    if (originalFile && originalFile instanceof File) {
+      // 重新創建 blob URL
+      const videoUrl = URL.createObjectURL(originalFile)
+      const videoSource: VideoSource = {
+        type: 'local',
+        url: videoUrl,
+        title: originalFile.name
+      }
+
+      if (side === 'left') {
+        setLeftVideo(videoSource)
+        setLeftBlobInvalid(false) // 重置失效狀態
+      } else {
+        setRightVideo(videoSource)
+        setRightBlobInvalid(false) // 重置失效狀態
+      }
+    } else {
+      // 無法重新載入時，自動觸發檔案選擇器
+      console.log(`無法重新載入 ${side} 側檔案，觸發檔案選擇器`)
+      if (side === 'left') {
+        setLeftOriginalFile(null)
+        setLeftBlobInvalid(false)
+        // 觸發檔案選擇器
+        if (leftFileInputRef.current) {
+          leftFileInputRef.current.click()
+        } else if (initialLeftFileInputRef.current) {
+          initialLeftFileInputRef.current.click()
+        }
+      } else {
+        setRightOriginalFile(null)
+        setRightBlobInvalid(false)
+        // 觸發檔案選擇器
+        if (rightFileInputRef.current) {
+          rightFileInputRef.current.click()
+        } else if (initialRightFileInputRef.current) {
+          initialRightFileInputRef.current.click()
+        }
+      }
+    }
+  }
+
+  // 檢測 blob URL 是否失效
+  const checkBlobValidity = (side: 'left' | 'right') => {
+    const video = side === 'left' ? leftVideo : rightVideo
+    const originalFile = side === 'left' ? leftOriginalFile : rightOriginalFile
+    
+    if (video?.type === 'local' && video.url.startsWith('blob:') && originalFile) {
+      // 嘗試訪問 blob URL，如果失敗則標記為失效
+      fetch(video.url, { method: 'HEAD' })
+        .then(response => {
+          if (!response.ok) {
+            if (side === 'left') {
+              setLeftBlobInvalid(true)
+            } else {
+              setRightBlobInvalid(true)
+            }
+          }
+        })
+        .catch(() => {
+          // 如果無法訪問，標記為失效
+          if (side === 'left') {
+            setLeftBlobInvalid(true)
+          } else {
+            setRightBlobInvalid(true)
+          }
+        })
+    }
   }
 
   const handleVideoSubmit = (side: 'left' | 'right') => {
@@ -588,23 +848,156 @@ const RaceAnalyzer: React.FC = () => {
     }
   }
 
+  // 使用 File System Access API 選擇檔案
+  const handleFileSelectWithAPI = async (side: 'left' | 'right') => {
+    try {
+      // 檢查瀏覽器是否支援 File System Access API
+      if (!('showOpenFilePicker' in window)) {
+        console.log('瀏覽器不支援 File System Access API，使用傳統檔案選擇器')
+        handleFileSelect(side)
+        return
+      }
+
+      const options = {
+        types: [
+          {
+            description: '影片檔案',
+            accept: {
+              'video/*': ['.mp4', '.webm', '.ogg', '.avi', '.mov', '.wmv']
+            }
+          }
+        ],
+        multiple: false
+      }
+
+      const [fileHandle] = await window.showOpenFilePicker(options)
+      const file = await fileHandle.getFile()
+
+      // 檢查是否為影片檔案
+      const videoTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/mov', 'video/wmv']
+      if (!videoTypes.includes(file.type)) {
+        alert('請選擇有效的影片檔案格式 (MP4, WebM, OGG, AVI, MOV, WMV)')
+        return
+      }
+
+      // 創建本地檔案 URL
+      const videoUrl = URL.createObjectURL(file)
+      const videoSource: VideoSource = {
+        type: 'local',
+        url: videoUrl,
+        title: file.name
+      }
+
+      if (side === 'left') {
+        setLeftVideo(videoSource)
+        setLeftOriginalFile(file)
+        setLeftFileHandle(fileHandle) // 保存檔案句柄
+        setLeftBlobInvalid(false)
+        setLeftVideoUrl('')
+        setShowLeftInput(false)
+      } else {
+        setRightVideo(videoSource)
+        setRightOriginalFile(file)
+        setRightFileHandle(fileHandle) // 保存檔案句柄
+        setRightBlobInvalid(false)
+        setRightVideoUrl('')
+        setShowRightInput(false)
+      }
+    } catch (error) {
+      console.error('檔案選擇失敗:', error)
+      // 如果 File System Access API 失敗，回退到傳統檔案選擇器
+      handleFileSelect(side)
+    }
+  }
+
   return (
     <div className="space-y-3">
+      {/* 初始檔案選擇區域 - 當沒有影片載入時顯示 */}
+      {!leftVideo && !rightVideo && (
+        <div className="bg-white rounded-lg shadow-md p-6 text-center">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">歡迎使用 RaceAna 賽車分析工具</h3>
+          <p className="text-gray-600 mb-6">請選擇要分析的影片檔案</p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col items-center space-y-2">
+              <h4 className="text-sm font-medium text-gray-700">我的錄影</h4>
+              <button
+                onClick={() => handleFileSelectWithAPI('left')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+              >
+                <Upload size={16} />
+                <span>選擇影片</span>
+              </button>
+              <input
+                ref={initialLeftFileInputRef}
+                type="file"
+                accept="video/*"
+                onChange={(e) => handleFileChange(e, 'left')}
+                className="hidden"
+              />
+            </div>
+            
+            <div className="flex flex-col items-center space-y-2">
+              <h4 className="text-sm font-medium text-gray-700">專家錄影</h4>
+              <button
+                onClick={() => handleFileSelectWithAPI('right')}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center space-x-2"
+              >
+                <Upload size={16} />
+                <span>選擇影片</span>
+              </button>
+              <input
+                ref={initialRightFileInputRef}
+                type="file"
+                accept="video/*"
+                onChange={(e) => handleFileChange(e, 'right')}
+                className="hidden"
+              />
+            </div>
+          </div>
+          
+          <div className="mt-6 p-3 bg-gray-50 rounded-lg">
+            <p className="text-xs text-gray-600">
+              支援的影片格式：MP4, WebM, OGG, AVI, MOV, WMV<br/>
+              您也可以輸入 YouTube 網址或本地檔案路徑
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* 主要內容區域 - 並排佈局 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {/* 左側影片 */}
         <div className="bg-white rounded-lg shadow-md p-2">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold text-gray-800">我的錄影</h3>
-            {leftVideo ? (
-              <button
-                onClick={() => handleChangeVideo('left')}
-                className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200"
-                title="更換影片"
-              >
-                換影片
-              </button>
-            ) : null}
+            <div className="flex items-center space-x-2">
+              <h3 className="text-sm font-semibold text-gray-800">我的錄影</h3>
+              {leftVideo?.title && (
+                <span className="text-xs text-gray-500 truncate max-w-32" title={leftVideo.title}>
+                  - {leftVideo.title}
+                </span>
+              )}
+            </div>
+            <div className="flex space-x-1">
+              {leftVideo ? (
+                <button
+                  onClick={() => handleChangeVideo('left')}
+                  className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200"
+                  title="更換影片"
+                >
+                  換影片
+                </button>
+              ) : null}
+              {leftBlobInvalid && (
+                <button
+                  onClick={() => handleReloadFile('left')}
+                  className="px-2 py-1 text-xs rounded hover:bg-blue-200 bg-red-100 text-red-600"
+                  title="檔案載入失敗，點擊重新選擇檔案"
+                >
+                  重新選擇
+                </button>
+              )}
+            </div>
           </div>
           
           {showLeftInput || !leftVideo ? (
@@ -623,6 +1016,14 @@ const RaceAnalyzer: React.FC = () => {
                 >
                   載入
                 </button>
+                <button
+                  onClick={() => handleFileSelectWithAPI('left')}
+                  className="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 flex items-center relative z-10"
+                  title="選擇本地影片檔案"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <Upload size={12} />
+                </button>
                 {showLeftInput && (
                   <button
                     onClick={() => setShowLeftInput(false)}
@@ -634,6 +1035,15 @@ const RaceAnalyzer: React.FC = () => {
               </div>
             </div>
           ) : null}
+          
+          {/* 隱藏的檔案輸入元素 - 移到條件渲染外部 */}
+          <input
+            ref={leftFileInputRef}
+            type="file"
+            accept="video/*"
+            onChange={(e) => handleFileChange(e, 'left')}
+            className="hidden"
+          />
           
           <VideoPlayer
             ref={leftPlayerRef}
@@ -653,16 +1063,34 @@ const RaceAnalyzer: React.FC = () => {
         {/* 右側影片 */}
         <div className="bg-white rounded-lg shadow-md p-2">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold text-gray-800">專家錄影</h3>
-            {rightVideo ? (
-              <button
-                onClick={() => handleChangeVideo('right')}
-                className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200"
-                title="更換影片"
-              >
-                換影片
-              </button>
-            ) : null}
+            <div className="flex items-center space-x-2">
+              <h3 className="text-sm font-semibold text-gray-800">專家錄影</h3>
+              {rightVideo?.title && (
+                <span className="text-xs text-gray-500 truncate max-w-32" title={rightVideo.title}>
+                  - {rightVideo.title}
+                </span>
+              )}
+            </div>
+            <div className="flex space-x-1">
+              {rightVideo ? (
+                <button
+                  onClick={() => handleChangeVideo('right')}
+                  className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200"
+                  title="更換影片"
+                >
+                  換影片
+                </button>
+              ) : null}
+              {rightBlobInvalid && (
+                <button
+                  onClick={() => handleReloadFile('right')}
+                  className="px-2 py-1 text-xs rounded hover:bg-blue-200 bg-red-100 text-red-600"
+                  title="檔案載入失敗，點擊重新選擇檔案"
+                >
+                  重新選擇
+                </button>
+              )}
+            </div>
           </div>
           
           {showRightInput || !rightVideo ? (
@@ -681,6 +1109,14 @@ const RaceAnalyzer: React.FC = () => {
                 >
                   載入
                 </button>
+                <button
+                  onClick={() => handleFileSelectWithAPI('right')}
+                  className="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 flex items-center relative z-10"
+                  title="選擇本地影片檔案"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <Upload size={12} />
+                </button>
                 {showRightInput && (
                   <button
                     onClick={() => setShowRightInput(false)}
@@ -692,6 +1128,15 @@ const RaceAnalyzer: React.FC = () => {
               </div>
             </div>
           ) : null}
+          
+          {/* 隱藏的檔案輸入元素 - 移到條件渲染外部 */}
+          <input
+            ref={rightFileInputRef}
+            type="file"
+            accept="video/*"
+            onChange={(e) => handleFileChange(e, 'right')}
+            className="hidden"
+          />
           
           <VideoPlayer
             ref={rightPlayerRef}
