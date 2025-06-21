@@ -26,6 +26,71 @@ const RaceAnalyzer: React.FC = () => {
   const longPressTimeoutsRef = useRef<Map<string, number>>(new Map())
   const pressedKeysRef = useRef<Set<string>>(new Set())
 
+  // Session Storage 功能
+  const saveToSession = (key: string, data: any) => {
+    try {
+      sessionStorage.setItem(key, JSON.stringify(data))
+    } catch (error) {
+      console.warn('無法保存到 sessionStorage:', error)
+    }
+  }
+
+  const loadFromSession = (key: string) => {
+    try {
+      const data = sessionStorage.getItem(key)
+      return data ? JSON.parse(data) : null
+    } catch (error) {
+      console.warn('無法從 sessionStorage 載入:', error)
+      return null
+    }
+  }
+
+  // 載入保存的資料
+  useEffect(() => {
+    const savedLeftVideo = loadFromSession('leftVideo')
+    const savedRightVideo = loadFromSession('rightVideo')
+    const savedMarkers = loadFromSession('markers')
+    const savedSyncMode = loadFromSession('syncMode')
+
+    if (savedLeftVideo) {
+      setLeftVideo(savedLeftVideo)
+    }
+    if (savedRightVideo) {
+      setRightVideo(savedRightVideo)
+    }
+    if (savedMarkers) {
+      setMarkers(savedMarkers)
+    }
+    if (savedSyncMode !== null) {
+      setSyncMode(savedSyncMode)
+    }
+  }, [])
+
+  // 保存影片資料
+  useEffect(() => {
+    if (leftVideo) {
+      saveToSession('leftVideo', leftVideo)
+    }
+  }, [leftVideo])
+
+  useEffect(() => {
+    if (rightVideo) {
+      saveToSession('rightVideo', rightVideo)
+    }
+  }, [rightVideo])
+
+  // 保存標籤資料
+  useEffect(() => {
+    if (markers.length > 0) {
+      saveToSession('markers', markers)
+    }
+  }, [markers])
+
+  // 保存同步模式
+  useEffect(() => {
+    saveToSession('syncMode', syncMode)
+  }, [syncMode])
+
   // 長按處理函數
   const handleLongPress = (key: string, action: () => void) => {
     console.log(`開始長按檢測: ${key}`)
@@ -246,9 +311,28 @@ const RaceAnalyzer: React.FC = () => {
   const handleVideoSubmit = (side: 'left' | 'right') => {
     const url = side === 'left' ? leftVideoUrl : rightVideoUrl
     if (url.trim()) {
-      const videoSource: VideoSource = {
-        type: url.includes('youtube.com') || url.includes('youtu.be') ? 'youtube' : 'local',
-        url: url.trim()
+      let videoSource: VideoSource
+      
+      // 判斷是否為本地檔案
+      if (url.startsWith('file://') || url.startsWith('/') || url.includes('\\')) {
+        // 本地檔案
+        videoSource = {
+          type: 'local',
+          url: url.trim(),
+          title: url.split('/').pop() || url.split('\\').pop() || '本地檔案' // 提取檔案名
+        }
+      } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        // YouTube 影片
+        videoSource = {
+          type: 'youtube',
+          url: url.trim()
+        }
+      } else {
+        // 其他網路影片
+        videoSource = {
+          type: 'local', // 預設為 local 類型
+          url: url.trim()
+        }
       }
       
       if (side === 'left') {
@@ -483,6 +567,27 @@ const RaceAnalyzer: React.FC = () => {
     }
   }, [isPlaying, leftIsPlaying, rightIsPlaying, syncMode, pressedKeys])
 
+  // 清除 session 資料
+  const clearSessionData = () => {
+    try {
+      sessionStorage.removeItem('leftVideo')
+      sessionStorage.removeItem('rightVideo')
+      sessionStorage.removeItem('markers')
+      sessionStorage.removeItem('syncMode')
+      
+      // 清除狀態
+      setLeftVideo(null)
+      setRightVideo(null)
+      setMarkers([])
+      setSyncMode(true)
+      setSelectedMarker('')
+      
+      console.log('已清除所有 session 資料')
+    } catch (error) {
+      console.warn('清除 session 資料時發生錯誤:', error)
+    }
+  }
+
   return (
     <div className="space-y-3">
       {/* 主要內容區域 - 並排佈局 */}
@@ -645,6 +750,14 @@ const RaceAnalyzer: React.FC = () => {
               }`}
             >
               {syncMode ? '同步播放' : '獨立播放'}
+            </button>
+            
+            <button
+              onClick={clearSessionData}
+              className="px-3 py-1 bg-red-100 text-red-700 rounded text-xs font-medium hover:bg-red-200"
+              title="清除所有保存的資料"
+            >
+              清除資料
             </button>
           </div>
         </div>
