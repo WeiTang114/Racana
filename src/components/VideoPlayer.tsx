@@ -177,7 +177,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
         <ReactPlayer
           ref={playerRef}
@@ -211,23 +211,23 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
       </div>
       
       {/* 獨立的標籤選單 */}
-      <div className="bg-gray-50 rounded-lg p-3">
+      <div className="bg-gray-50 rounded-lg p-2">
         <div className="flex items-center justify-between">
           {/* 左側：影片控制器 */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <button
               onClick={handleStepBackward}
               className="p-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
               title="逐幀後退"
             >
-              <SkipBack size={14} />
+              <SkipBack size={12} />
             </button>
             
             <button
               onClick={handleInternalPlayPause}
-              className="p-2 bg-primary-600 text-white rounded-full hover:bg-primary-700"
+              className="p-1.5 bg-primary-600 text-white rounded-full hover:bg-primary-700"
             >
-              {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+              {isPlaying ? <Pause size={14} /> : <Play size={14} />}
             </button>
             
             <button
@@ -235,19 +235,19 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
               className="p-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
               title="逐幀前進"
             >
-              <SkipForward size={14} />
+              <SkipForward size={12} />
             </button>
           </div>
           
           {/* 右側：標籤設置 */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <div className="text-xs font-medium text-gray-700">設置標籤：</div>
-            <div className="flex space-x-2">
+            <div className="flex space-x-1">
               {['1', '2', '3', '4', '5'].map((label) => (
                 <button
                   key={label}
                   onClick={() => onSetMarkerAtCurrentTime(label, currentTime)}
-                  className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
+                  className={`w-6 h-6 rounded-full text-xs font-medium transition-colors ${
                     selectedMarker === label 
                       ? 'bg-red-500 text-white' 
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -295,10 +295,10 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
                 onClick={() => onJumpToMarker(marker)}
                 title={`標籤 ${marker.label}: ${formatTime(markerTime)}`}
               >
-                <div className={`w-2.5 h-2.5 rounded-full border border-white shadow-sm hover:scale-110 transition-transform ${
+                <div className={`w-2 h-2 rounded-full border border-white shadow-sm hover:scale-110 transition-transform ${
                   selectedMarker === marker.label ? 'bg-red-500' : 'bg-blue-500'
                 }`}></div>
-                <div className={`absolute top-3 left-1/2 transform -translate-x-1/2 text-xs px-1 py-0.5 rounded whitespace-nowrap ${
+                <div className={`absolute top-2 left-1/2 transform -translate-x-1/2 text-xs px-1 py-0.5 rounded whitespace-nowrap ${
                   selectedMarker === marker.label 
                     ? 'bg-red-500 text-white' 
                     : 'bg-blue-500 text-white'
