@@ -20,6 +20,21 @@ interface FileSystemFileHandle {
   getFile(): Promise<File>
 }
 
+const parseLabelsParam = (param: string | null) => {
+  if (!param) return []
+  return param.split(',').map(pair => {
+    const [label, time] = pair.split('-')
+    return { label, time: parseFloat(time) }
+  })
+}
+
+const buildLabelsParam = (markers: Marker[], side: 'left' | 'right') => {
+  return markers
+    .filter(m => (side === 'left' ? m.leftTime !== undefined : m.rightTime !== undefined))
+    .map(m => `${m.label}-${side === 'left' ? m.leftTime : m.rightTime}`)
+    .join(',')
+}
+
 const RaceAnalyzer: React.FC = () => {
   const [leftVideo, setLeftVideo] = useState<VideoSource | null>(null)
   const [rightVideo, setRightVideo] = useState<VideoSource | null>(null)
@@ -61,6 +76,9 @@ const RaceAnalyzer: React.FC = () => {
   const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set())
   const longPressTimeoutsRef = useRef<Map<string, number>>(new Map())
   const pressedKeysRef = useRef<Set<string>>(new Set())
+
+  const location = window.location
+  const navigate = (url: string) => { window.history.replaceState(null, '', url) }
 
   // 載入保存的資料
   useEffect(() => {
@@ -919,6 +937,56 @@ const RaceAnalyzer: React.FC = () => {
       return null
     }
   }
+
+  // 網址參數初始化
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const leftId = params.get('left')
+    const rightId = params.get('right')
+    const leftLabels = parseLabelsParam(params.get('leftLabels'))
+    const rightLabels = parseLabelsParam(params.get('rightLabels'))
+
+    if (leftId) {
+      setLeftVideo({ type: 'youtube', url: `https://www.youtube.com/watch?v=${leftId}` })
+    }
+    if (rightId) {
+      setRightVideo({ type: 'youtube', url: `https://www.youtube.com/watch?v=${rightId}` })
+    }
+    if (leftLabels.length > 0 || rightLabels.length > 0) {
+      // 合併左右標籤
+      const merged: Marker[] = []
+      leftLabels.forEach(({ label, time }) => {
+        merged.push({ id: Date.now() + Math.random(), label, leftTime: time, rightTime: undefined, videoSide: 'left' })
+      })
+      rightLabels.forEach(({ label, time }) => {
+        // 若已存在同 label，則補 rightTime
+        const exist = merged.find(m => m.label === label)
+        if (exist) {
+          exist.rightTime = time
+          exist.videoSide = 'both'
+        } else {
+          merged.push({ id: Date.now() + Math.random(), label, leftTime: undefined, rightTime: time, videoSide: 'right' })
+        }
+      })
+      setMarkers(merged)
+    }
+  }, [])
+
+  // 狀態變動時自動更新網址參數
+  useEffect(() => {
+    // 只針對 YouTube 影片同步網址
+    const leftId = leftVideo && leftVideo.type === 'youtube' ? (leftVideo.url.match(/[?&]v=([^&]+)/)?.[1] || '') : ''
+    const rightId = rightVideo && rightVideo.type === 'youtube' ? (rightVideo.url.match(/[?&]v=([^&]+)/)?.[1] || '') : ''
+    const leftLabels = buildLabelsParam(markers, 'left')
+    const rightLabels = buildLabelsParam(markers, 'right')
+    const params = new URLSearchParams()
+    if (leftId) params.set('left', leftId)
+    if (rightId) params.set('right', rightId)
+    if (leftLabels) params.set('leftLabels', leftLabels)
+    if (rightLabels) params.set('rightLabels', rightLabels)
+    const newUrl = location.pathname + (params.toString() ? `?${params.toString()}` : '')
+    navigate(newUrl)
+  }, [leftVideo, rightVideo, markers])
 
   return (
     <div className="space-y-2">
