@@ -32,7 +32,6 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   onPlayPause,
   onDurationChange,
   onTimeUpdate,
-  syncMode,
   side,
   markers,
   onJumpToMarker,
@@ -45,8 +44,6 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   const playerRef = useRef<ReactPlayer>(null)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
-  const lastUpdateRef = useRef(0)
-  const updateTimeoutRef = useRef<number | null>(null)
 
   // 內部播放控制
   const handleInternalPlayPause = () => {

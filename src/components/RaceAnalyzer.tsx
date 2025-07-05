@@ -35,7 +35,7 @@ interface RaceAnalyzerProps {
   syncMode: boolean
   setLeftVideo: (video: VideoSource | null) => void
   setRightVideo: (video: VideoSource | null) => void
-  setMarkers: (markers: Marker[]) => void
+  setMarkers: (markers: Marker[] | ((prev: Marker[]) => Marker[])) => void
   setSyncMode: (sync: boolean) => void
   onLeftTimeUpdate: (time: number) => void
   onRightTimeUpdate: (time: number) => void
@@ -298,10 +298,10 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
   }, [isPlaying, syncMode])
 
   const handleAddMarker = (time: number, label: string, side: 'left' | 'right') => {
-    setMarkers(prev => {
-      const existingMarker = prev.find(m => m.label === label)
+    setMarkers((prev: Marker[]) => {
+      const existingMarker = prev.find((m: Marker) => m.label === label)
       if (existingMarker) {
-        return prev.map(m => 
+        return prev.map((m: Marker) => 
           m.label === label 
             ? { ...m, [`${side}Time`]: time }
             : m
