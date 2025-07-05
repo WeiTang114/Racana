@@ -10,7 +10,7 @@
     "report": "Report"
   },
   "app": {
-    "title": "Racana - Racing Analysis Tool",
+    "title": "Racing Video Comparison Analysis",
     "welcome": "Welcome to Racana",
     "welcomeDescription": "Please select or enter video sources below to start analysis. You can load local video files or enter YouTube URLs.",
     "supportedFormats": "Supported video formats: MP4, WebM, OGG, AVI, MOV, WMV",

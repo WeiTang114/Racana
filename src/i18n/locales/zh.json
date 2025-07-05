@@ -10,7 +10,7 @@
     "report": "回報"
   },
   "app": {
-    "title": "Racana - 賽車分析工具",
+    "title": "賽車影片對比分析",
     "welcome": "歡迎使用 Racana",
     "welcomeDescription": "請在下方選擇或輸入影片來源開始分析。您可以載入本地影片檔案或輸入 YouTube 網址。",
     "supportedFormats": "支援的影片格式：MP4, WebM, OGG, AVI, MOV, WMV",

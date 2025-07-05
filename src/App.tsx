@@ -15,8 +15,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-2">
             <div className="flex items-center">
-              <h1 className="text-xl font-bold text-cyber-blue">Racana</h1>
-              <span className="ml-2 text-sm text-cyber-blue/70">{t('app.title')}</span>
+              <h1 className="text-xl font-bold text-cyber-blue">{t('app.title')}</h1>
             </div>
             <div className="flex items-center space-x-2">
               <LanguageSwitcher />
