@@ -204,6 +204,28 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
               </div>
             </div>
           </div>
+
+          {/* 問題回報 */}
+          <div>
+            <h3 className="text-md font-semibold text-cyber-orange mb-3 flex items-center">
+              <span className="bg-cyber-orange text-white px-2 py-1 rounded text-xs mr-2">🐛</span>
+              問題回報
+            </h3>
+            <div className="bg-cyber-dark/50 rounded-lg p-4 border border-cyber-orange/20">
+              <p className="text-sm text-cyber-blue/80 mb-3">
+                如果您在使用過程中遇到任何問題或有功能建議，歡迎透過 GitHub Issues 回報給我們！
+              </p>
+              <a 
+                href="https://github.com/WeiTang114/RaceAna/issues/new" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-4 py-2 bg-cyber-orange text-white rounded-lg hover:bg-cyber-orange/80 transition-all duration-300 text-sm font-medium"
+              >
+                <span className="mr-2">📝</span>
+                回報問題
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* 底部按鈕 */}
