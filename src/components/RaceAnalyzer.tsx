@@ -50,6 +50,8 @@ const RaceAnalyzer: React.FC = () => {
   const [rightVideoUrl, setRightVideoUrl] = useState('')
   const [showLeftInput, setShowLeftInput] = useState(false)
   const [showRightInput, setShowRightInput] = useState(false)
+  const [leftInitialTime, setLeftInitialTime] = useState<number | undefined>(undefined)
+  const [rightInitialTime, setRightInitialTime] = useState<number | undefined>(undefined)
   
   // 保存原始檔案資訊，用於重新載入
   const [leftOriginalFile, setLeftOriginalFile] = useState<File | null>(null)
@@ -947,6 +949,8 @@ const RaceAnalyzer: React.FC = () => {
     const rightId = params.get('right')
     const leftLabels = parseLabelsParam(params.get('leftLabels'))
     const rightLabels = parseLabelsParam(params.get('rightLabels'))
+    const leftStartTime = params.get('leftStartTime')
+    const rightStartTime = params.get('rightStartTime')
 
     if (leftId) {
       setLeftVideo({ type: 'youtube', url: `https://www.youtube.com/watch?v=${leftId}` })
@@ -972,6 +976,13 @@ const RaceAnalyzer: React.FC = () => {
       })
       setMarkers(merged)
     }
+
+    if (leftStartTime) {
+      setLeftInitialTime(parseFloat(leftStartTime))
+    }
+    if (rightStartTime) {
+      setRightInitialTime(parseFloat(rightStartTime))
+    }
   }, [])
 
   // 狀態變動時自動更新網址參數
@@ -981,7 +992,7 @@ const RaceAnalyzer: React.FC = () => {
     const rightId = rightVideo && rightVideo.type === 'youtube' ? (rightVideo.url.match(/[?&]v=([^&]+)/)?.[1] || '') : ''
     const leftLabels = buildLabelsParam(markers, 'left')
     const rightLabels = buildLabelsParam(markers, 'right')
-    const params = new URLSearchParams()
+    const params = new URLSearchParams(location.search)
     if (leftId) params.set('left', leftId)
     if (rightId) params.set('right', rightId)
     if (leftLabels) params.set('leftLabels', leftLabels)
@@ -1102,6 +1113,7 @@ const RaceAnalyzer: React.FC = () => {
             onSetMarkerAtCurrentTime={(label, time) => handleSetMarkerAtCurrentTime(label, time, 'left')}
             selectedMarker={selectedMarker}
             jumpToTime={undefined}
+            initialTime={leftInitialTime}
           />
         </div>
 
@@ -1196,6 +1208,7 @@ const RaceAnalyzer: React.FC = () => {
             onSetMarkerAtCurrentTime={(label, time) => handleSetMarkerAtCurrentTime(label, time, 'right')}
             selectedMarker={selectedMarker}
             jumpToTime={undefined}
+            initialTime={rightInitialTime}
           />
         </div>
       </div>

@@ -21,7 +21,8 @@ interface VideoPlayerProps {
   onJumpToMarker: (marker: Marker) => void
   onSetMarkerAtCurrentTime: (label: string, time: number) => void
   selectedMarker: string
-  jumpToTime?: number // 新增：外部要求跳轉時用
+  jumpToTime?: number
+  initialTime?: number
 }
 
 const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
@@ -35,7 +36,8 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   onJumpToMarker,
   onSetMarkerAtCurrentTime,
   selectedMarker,
-  jumpToTime
+  jumpToTime,
+  initialTime
 }, ref) => {
   const { t } = useTranslation()
   const playerRef = useRef<ReactPlayer>(null)
@@ -201,12 +203,10 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
             }
           }}
           progressInterval={100}
-          config={{
-            youtube: {
-              playerVars: {
-                modestbranding: 1,
-                controls: 0,
-              }
+          onReady={() => {
+            if (initialTime && playerRef.current) {
+              playerRef.current.seekTo(initialTime, 'seconds')
+              setCurrentTime(initialTime)
             }
           }}
         />
