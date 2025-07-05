@@ -800,6 +800,8 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
       setSelectedMarker('')
       
       console.log('已清除所有 session 資料')
+      // 清除網址參數
+      window.history.replaceState(null, '', window.location.pathname)
     } catch (error) {
       console.warn('清除 session 資料時發生錯誤:', error)
     }
