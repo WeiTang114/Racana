@@ -175,7 +175,10 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
           />
         ) : (
           <div className="flex items-center justify-center w-full h-full text-cyber-blue/70">
-            {t('video.noVideoLoaded')}
+            <div className="text-center">
+              <div className="text-cyber-blue/50 text-4xl mb-2">📹</div>
+              <p className="text-sm">{t('video.pleaseSelectVideoSource')}</p>
+            </div>
           </div>
         )}
       </div>
