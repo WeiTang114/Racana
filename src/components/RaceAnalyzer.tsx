@@ -949,7 +949,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                   className={`bg-cyber-dark/50 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
                   title={t('video.changeVideo')}
                 >
-                  {isMobile ? '切換' : t('video.changeVideo')}
+                  {isMobile ? t('video.mobile.changeVideo') : t('video.changeVideo')}
                 </button>
               ) : null}
               {leftBlobInvalid && leftVideo && leftVideo.type === 'local' && (
@@ -958,7 +958,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                   className={`rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
                   title="檔案載入失敗，點擊重新選擇檔案"
                 >
-                  {isMobile ? '重選' : '重新選擇'}
+                  {isMobile ? t('video.mobile.reloadFile') : '重新選擇'}
                 </button>
               )}
             </div>
@@ -1034,7 +1034,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
             <div className="flex items-center space-x-2">
               <h3 className={`font-semibold text-cyber-orange ${isMobile ? 'text-xs' : 'text-sm'}`}>
                 {t('video.expertRecording')}
-                {isMobile && <span className="text-xs text-cyber-orange/70 ml-1">(靜音)</span>}
+                {isMobile && <span className="text-xs text-cyber-orange/70 ml-1">({t('video.mobile.muted')})</span>}
               </h3>
               {rightVideo?.title && (
                 <span className={`text-cyber-orange/70 truncate ${isMobile ? 'text-xs max-w-20' : 'text-xs max-w-32'}`} title={rightVideo.title}>
@@ -1049,7 +1049,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                   className={`bg-cyber-dark/50 text-cyber-orange rounded hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
                   title={t('video.changeVideo')}
                 >
-                  {isMobile ? '切換' : t('video.changeVideo')}
+                  {isMobile ? t('video.mobile.changeVideo') : t('video.changeVideo')}
                 </button>
               ) : null}
               {rightBlobInvalid && rightVideo && rightVideo.type === 'local' && (
@@ -1058,7 +1058,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                   className={`rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
                   title="檔案載入失敗，點擊重新選擇檔案"
                 >
-                  {isMobile ? '重選' : '重新選擇'}
+                  {isMobile ? t('video.mobile.reloadFile') : '重新選擇'}
                 </button>
               )}
             </div>
@@ -1171,7 +1171,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                   : 'bg-cyber-dark/50 text-cyber-blue/70 border border-cyber-blue/20 hover:bg-cyber-blue/10'
               } ${isMobile ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-xs'}`}
             >
-              {syncMode ? (isMobile ? '同步' : t('controls.syncPlayback')) : (isMobile ? '獨立' : t('controls.independentPlayback'))}
+              {syncMode ? (isMobile ? t('controls.mobile.syncPlayback') : t('controls.syncPlayback')) : (isMobile ? t('controls.mobile.independentPlayback') : t('controls.independentPlayback'))}
             </button>
             
             <button
@@ -1179,7 +1179,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
               className={`bg-cyber-dark/50 text-cyber-red/70 rounded font-medium hover:bg-cyber-red/20 border border-cyber-red/20 transition-all duration-300 ${isMobile ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-xs'}`}
               title={t('controls.clearAllSavedData')}
             >
-              {isMobile ? '清除' : t('controls.clearData')}
+              {isMobile ? t('controls.mobile.clearData') : t('controls.clearData')}
             </button>
           </div>
         </div>
@@ -1212,7 +1212,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                     onClick={() => setSelectedMarker(marker.label)}
                     className={`text-cyber-blue hover:text-cyber-neon transition-colors duration-300 ${isMobile ? 'text-xs' : 'text-xs'}`}
                   >
-                    {selectedMarker === marker.label ? '✓' : (isMobile ? '選' : t('markers.select'))}
+                    {selectedMarker === marker.label ? '✓' : (isMobile ? t('markers.mobile.select') : t('markers.select'))}
                   </button>
                   <button
                     onClick={() => handleDeleteMarker(marker.id)}
@@ -1226,7 +1226,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
               <div className="space-y-1">
                 <div className={`flex items-center justify-between ${isMobile ? 'flex-col space-y-1' : ''}`}>
                   <div className="flex items-center space-x-1">
-                    <span className={`text-cyber-blue/70 ${isMobile ? 'text-xs' : 'text-xs'}`}>{isMobile ? '左' : t('video.left')}:</span>
+                    <span className={`text-cyber-blue/70 ${isMobile ? 'text-xs' : 'text-xs'}`}>{isMobile ? t('video.mobile.left') : t('video.left')}:</span>
                     <span className={`text-cyber-blue ${isMobile ? 'text-xs' : 'text-xs'}`}>
                       {marker.leftTime !== undefined ? formatTime(marker.leftTime) : '-'}
                     </span>
@@ -1235,7 +1235,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                       disabled={marker.leftTime === undefined}
                       className={`bg-cyber-blue/30 text-cyber-blue rounded hover:bg-cyber-blue/40 disabled:opacity-50 transition-all duration-300 ${isMobile ? 'px-0.5 py-0.5 text-xs' : 'px-1 py-0.5 text-xs'}`}
                     >
-                      {isMobile ? '跳' : t('markers.jump')}
+                      {isMobile ? t('markers.mobile.jump') : t('markers.jump')}
                     </button>
                   </div>
                   
@@ -1249,7 +1249,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                       disabled={marker.rightTime === undefined}
                       className={`bg-cyber-orange/30 text-cyber-orange rounded hover:bg-cyber-orange/40 disabled:opacity-50 transition-all duration-300 ${isMobile ? 'px-0.5 py-0.5 text-xs' : 'px-1 py-0.5 text-xs'}`}
                     >
-                      {isMobile ? '跳' : t('markers.jump')}
+                      {isMobile ? t('markers.mobile.jump') : t('markers.jump')}
                     </button>
                   </div>
                 </div>
@@ -1262,7 +1262,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                     className={`bg-cyber-green/90 text-white rounded hover:bg-cyber-green transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-1.5 py-0.5 text-xs'}`}
                     title={t('markers.syncJumpToMarker')}
                   >
-                    {isMobile ? '同步跳' : t('markers.syncJump')}
+                    {isMobile ? t('markers.mobile.syncJump') : t('markers.syncJump')}
                   </button>
                 </div>
               </div>
@@ -1271,7 +1271,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
           
           {markers.length === 0 && (
             <div className="col-span-full text-center text-cyber-blue/50 py-1 text-xs">
-              {isMobile ? '無標籤' : t('markers.noMarkersAdded')}
+              {isMobile ? t('markers.mobile.noMarkers') : t('markers.noMarkersAdded')}
             </div>
           )}
         </div>

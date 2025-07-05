@@ -211,7 +211,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
           
           {/* 右側：標籤設置 */}
           <div className="flex items-center space-x-1">
-            <div className={`font-medium text-cyber-purple ${isMobile ? 'text-xs' : 'text-xs'}`}>{isMobile ? '標籤' : t('markers.setMarker')}：</div>
+            <div className={`font-medium text-cyber-purple ${isMobile ? 'text-xs' : 'text-xs'}`}>{isMobile ? t('markers.mobile.setMarker') : t('markers.setMarker')}：</div>
             <div className="flex space-x-1">
               {['1', '2', '3', '4', '5'].map((label) => (
                 <button

@@ -34,7 +34,14 @@
     "myRecordingSource": "My Recording Source",
     "expertRecordingSource": "Expert Recording Source",
     "enterLocalPathOrYouTube": "Enter local file path or YouTube URL",
-    "loaded": "Loaded"
+    "loaded": "Loaded",
+    "mobile": {
+      "changeVideo": "Switch",
+      "reloadFile": "Reload",
+      "left": "L",
+      "right": "R",
+      "muted": "Muted"
+    }
   },
   "controls": {
     "play": "Play",
@@ -45,14 +52,19 @@
     "jumpBackward": "Jump Backward",
     "syncMode": "Sync Mode",
     "independentMode": "Independent Mode",
-    "playbackControl": "Playback Control",
+    "playbackControl": "Control",
     "frameForward": "Frame Forward",
     "frameBackward": "Frame Backward",
-    "playbackMode": "Playback Mode",
+    "playbackMode": "Mode",
     "syncPlayback": "Sync Playback",
     "independentPlayback": "Independent Playback",
     "clearData": "Clear Data",
-    "clearAllSavedData": "Clear all saved data"
+    "clearAllSavedData": "Clear all saved data",
+    "mobile": {
+      "syncPlayback": "Sync",
+      "independentPlayback": "Indep.",
+      "clearData": "Clear"
+    }
   },
   "markers": {
     "setMarker": "Set Marker",
@@ -68,7 +80,14 @@
     "noMarkersAdded": "No markers added yet",
     "selected": "Selected",
     "timeFormat": "MM:SS",
-    "notSet": "Not Set"
+    "notSet": "Not Set",
+    "mobile": {
+      "setMarker": "Mark",
+      "jump": "Go",
+      "syncJump": "Sync Go",
+      "noMarkers": "No mark",
+      "select": "Sel"
+    }
   },
   "help": {
     "title": "User Guide",

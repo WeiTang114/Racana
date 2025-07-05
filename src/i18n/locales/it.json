@@ -34,7 +34,14 @@
     "myRecordingSource": "Sorgente Mia Registrazione",
     "expertRecordingSource": "Sorgente Registrazione Esperto",
     "enterLocalPathOrYouTube": "Inserisci percorso file locale o URL YouTube",
-    "loaded": "Caricato"
+    "loaded": "Caricato",
+    "mobile": {
+      "changeVideo": "Cambia",
+      "reloadFile": "Ricarica",
+      "left": "S",
+      "right": "D",
+      "muted": "Muto"
+    }
   },
   "controls": {
     "play": "Riproduci",
@@ -45,14 +52,19 @@
     "jumpBackward": "Salta Indietro",
     "syncMode": "Modalità Sincronizzata",
     "independentMode": "Modalità Indipendente",
-    "playbackControl": "Controllo Riproduzione",
+    "playbackControl": "Controllo",
     "frameForward": "Frame Avanti",
     "frameBackward": "Frame Indietro",
-    "playbackMode": "Modalità Riproduzione",
+    "playbackMode": "Modalità",
     "syncPlayback": "Riproduzione Sincronizzata",
     "independentPlayback": "Riproduzione Indipendente",
     "clearData": "Cancella Dati",
-    "clearAllSavedData": "Cancella tutti i dati salvati"
+    "clearAllSavedData": "Cancella tutti i dati salvati",
+    "mobile": {
+      "syncPlayback": "Sync",
+      "independentPlayback": "Indep.",
+      "clearData": "Pulisci"
+    }
   },
   "markers": {
     "setMarker": "Imposta Marker",
@@ -68,7 +80,14 @@
     "noMarkersAdded": "Nessun marker aggiunto ancora",
     "selected": "Selezionato",
     "timeFormat": "MM:SS",
-    "notSet": "Non Impostato"
+    "notSet": "Non Impostato",
+    "mobile": {
+      "setMarker": "Segna",
+      "jump": "Vai",
+      "syncJump": "Sync Vai",
+      "noMarkers": "Nessun segno",
+      "select": "Sel"
+    }
   },
   "help": {
     "title": "Guida Utente",

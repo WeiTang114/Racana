@@ -34,7 +34,14 @@
     "myRecordingSource": "我的錄影來源",
     "expertRecordingSource": "專家錄影來源",
     "enterLocalPathOrYouTube": "輸入本地檔案路徑或 YouTube 網址",
-    "loaded": "已載入"
+    "loaded": "已載入",
+    "mobile": {
+      "changeVideo": "切換",
+      "reloadFile": "重選",
+      "left": "左",
+      "right": "右",
+      "muted": "靜音"
+    }
   },
   "controls": {
     "play": "播放",
@@ -52,7 +59,12 @@
     "syncPlayback": "同步播放",
     "independentPlayback": "獨立播放",
     "clearData": "清除資料",
-    "clearAllSavedData": "清除所有保存的資料"
+    "clearAllSavedData": "清除所有保存的資料",
+    "mobile": {
+      "syncPlayback": "同步",
+      "independentPlayback": "獨立",
+      "clearData": "清除"
+    }
   },
   "markers": {
     "setMarker": "設置標籤",
@@ -68,7 +80,14 @@
     "noMarkersAdded": "尚未新增任何標籤",
     "selected": "已選中",
     "timeFormat": "分:秒",
-    "notSet": "未設置"
+    "notSet": "未設置",
+    "mobile": {
+      "setMarker": "標籤",
+      "jump": "跳",
+      "syncJump": "同步跳",
+      "noMarkers": "無標籤",
+      "select": "選"
+    }
   },
   "help": {
     "title": "使用說明",
