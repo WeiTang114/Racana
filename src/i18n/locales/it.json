@@ -111,5 +111,14 @@
     "invalidVideoFormat": "Seleziona un formato file video valido (MP4, WebM, OGG, AVI, MOV, WMV, MKV, 3GP)",
     "fileType": "Tipo File",
     "fileExtension": "Estensione File"
+  },
+  "share": {
+    "title": "Condividi Analisi",
+    "options": "Opzioni di Condivisione",
+    "includeMarkers": "Includi marker",
+    "includeCurrentTime": "Includi tempo di riproduzione corrente",
+    "generatedLink": "Link Generato",
+    "copy": "Copia",
+    "copied": "Copiato!"
   }
 } 

@@ -111,5 +111,14 @@
     "invalidVideoFormat": "Please select a valid video file format (MP4, WebM, OGG, AVI, MOV, WMV, MKV, 3GP)",
     "fileType": "File Type",
     "fileExtension": "File Extension"
+  },
+  "share": {
+    "title": "Share Analysis",
+    "options": "Share Options",
+    "includeMarkers": "Include markers",
+    "includeCurrentTime": "Include current playback time",
+    "generatedLink": "Generated Link",
+    "copy": "Copy",
+    "copied": "Copied!"
   }
 } 

@@ -15,6 +15,7 @@ interface VideoPlayerProps {
   isPlaying: boolean
   onPlayPause: (playing: boolean) => void
   onDurationChange: (duration: number) => void
+  onTimeUpdate: (time: number) => void
   syncMode: boolean
   side: VideoSide
   markers: Marker[]
@@ -30,6 +31,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   isPlaying,
   onPlayPause,
   onDurationChange,
+  onTimeUpdate,
   syncMode,
   side,
   markers,
@@ -55,24 +57,27 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   useImperativeHandle(ref, () => ({
     seekTo: (time: number, relative?: boolean) => {
       if (playerRef.current) {
-        const targetTime = relative ? currentTime + time : time
+        const targetTime = relative ? (playerRef.current.getCurrentTime() || 0) + time : time
         const clampedTime = Math.max(0, Math.min(targetTime, duration))
         playerRef.current.seekTo(clampedTime, 'seconds')
         setCurrentTime(clampedTime)
+        onTimeUpdate(clampedTime)
       }
     },
     stepForward: () => {
       if (playerRef.current) {
-        const newTime = Math.min(currentTime + 1/30, duration) // 假設 30fps
+        const newTime = Math.min((playerRef.current.getCurrentTime() || 0) + 1/30, duration) // 假設 30fps
         playerRef.current.seekTo(newTime, 'seconds')
         setCurrentTime(newTime)
+        onTimeUpdate(newTime)
       }
     },
     stepBackward: () => {
       if (playerRef.current) {
-        const newTime = Math.max(currentTime - 1/30, 0) // 假設 30fps
+        const newTime = Math.max((playerRef.current.getCurrentTime() || 0) - 1/30, 0) // 假設 30fps
         playerRef.current.seekTo(newTime, 'seconds')
         setCurrentTime(newTime)
+        onTimeUpdate(newTime)
       }
     }
   }))
@@ -82,36 +87,14 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
     if (jumpToTime !== undefined && playerRef.current) {
       playerRef.current.seekTo(jumpToTime, 'seconds')
       setCurrentTime(jumpToTime)
+      onTimeUpdate(jumpToTime)
     }
-  }, [jumpToTime])
+  }, [jumpToTime, onTimeUpdate])
 
-  useEffect(() => {
-    if (playerRef.current && syncMode) {
-      playerRef.current.seekTo(currentTime, 'seconds')
-    }
-  }, [syncMode])
-
-  // onProgress 只更新自己
-  const debouncedTimeUpdate = useCallback((newTime: number) => {
-    if (Math.abs(newTime - lastUpdateRef.current) < 0.1) return
-    if (updateTimeoutRef.current) clearTimeout(updateTimeoutRef.current)
-    updateTimeoutRef.current = setTimeout(() => {
-      lastUpdateRef.current = newTime
-      setCurrentTime(newTime)
-    }, 50)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (updateTimeoutRef.current) clearTimeout(updateTimeoutRef.current)
-    }
-  }, [])
-
+  // onProgress 只更新內部時間狀態
   const handleProgress = useCallback(({ playedSeconds }: { playedSeconds: number }) => {
-    if (!syncMode) {
-      debouncedTimeUpdate(playedSeconds)
-    }
-  }, [syncMode, debouncedTimeUpdate])
+    setCurrentTime(playedSeconds)
+  }, [])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -122,6 +105,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = parseFloat(e.target.value)
     setCurrentTime(newTime)
+    onTimeUpdate(newTime)
     if (playerRef.current) playerRef.current.seekTo(newTime, 'seconds')
   }
 
@@ -134,38 +118,22 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
     return side === 'left' ? marker.leftTime : marker.rightTime
   }
 
-  // 同步模式下用 requestAnimationFrame 推進 currentTime
-  useEffect(() => {
-    if (!syncMode || !isPlaying) return
-    let rafId: number | null = null
-    let lastTime = performance.now()
-    function step(now: number) {
-      if (!isPlaying || !syncMode) return
-      const delta = (now - lastTime) / 1000
-      lastTime = now
-      setCurrentTime(prev => prev + delta)
-      rafId = requestAnimationFrame(step)
-    }
-    rafId = requestAnimationFrame(step)
-    return () => {
-      if (rafId) cancelAnimationFrame(rafId)
-    }
-  }, [syncMode, isPlaying])
-
   // 逐幀控制
   const handleStepForward = () => {
     if (playerRef.current) {
-      const newTime = Math.min(currentTime + 1/30, duration)
+      const newTime = Math.min((playerRef.current.getCurrentTime() || 0) + 1/30, duration)
       playerRef.current.seekTo(newTime, 'seconds')
       setCurrentTime(newTime)
+      onTimeUpdate(newTime)
     }
   }
 
   const handleStepBackward = () => {
     if (playerRef.current) {
-      const newTime = Math.max(currentTime - 1/30, 0)
+      const newTime = Math.max((playerRef.current.getCurrentTime() || 0) - 1/30, 0)
       playerRef.current.seekTo(newTime, 'seconds')
       setCurrentTime(newTime)
+      onTimeUpdate(newTime)
     }
   }
 
@@ -200,6 +168,10 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
           onPause={() => {
             if (isPlaying) {
               onPlayPause(false)
+              // 暫停時更新父組件的時間
+              const newTime = playerRef.current?.getCurrentTime() || 0
+              setCurrentTime(newTime)
+              onTimeUpdate(newTime)
             }
           }}
           progressInterval={100}
@@ -207,6 +179,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
             if (initialTime && playerRef.current) {
               playerRef.current.seekTo(initialTime, 'seconds')
               setCurrentTime(initialTime)
+              onTimeUpdate(initialTime)
             }
           }}
         />

@@ -111,5 +111,14 @@
     "invalidVideoFormat": "請選擇有效的影片檔案格式 (MP4, WebM, OGG, AVI, MOV, WMV, MKV, 3GP)",
     "fileType": "檔案類型",
     "fileExtension": "檔案副檔名"
+  },
+  "share": {
+    "title": "分享分析",
+    "options": "分享選項",
+    "includeMarkers": "包含標籤",
+    "includeCurrentTime": "包含目前播放時間",
+    "generatedLink": "產生的連結",
+    "copy": "複製",
+    "copied": "已複製！"
   }
 } 
