@@ -10,9 +10,9 @@ const LanguageSwitcher: React.FC = () => {
   const menuRef = useRef<HTMLDivElement>(null)
 
   const languages = [
-    { code: 'zh', name: '中文', flag: '🇹🇼' },
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'it', name: 'Italiano', flag: '🇮🇹' }
+    { code: 'zh', name: '中文', short: '中文' },
+    { code: 'en', name: 'English', short: 'EN' },
+    { code: 'it', name: 'Italiano', short: 'IT' }
   ]
 
   const handleLanguageChange = (languageCode: string) => {
@@ -57,11 +57,11 @@ const LanguageSwitcher: React.FC = () => {
       <button 
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 bg-cyber-dark/70 text-cyber-blue rounded-lg hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
+        className="flex items-center space-x-2 px-3 py-2 text-cyber-blue hover:bg-cyber-blue/10 rounded-lg transition-all duration-300"
       >
         <Globe size={16} />
-        <span className="text-sm font-medium">
-          {languages.find(lang => lang.code === i18n.language)?.flag || '🌐'}
+        <span className="text-xs font-medium">
+          {languages.find(lang => lang.code === i18n.language)?.short || '🌐'}
         </span>
       </button>
       
@@ -81,8 +81,8 @@ const LanguageSwitcher: React.FC = () => {
                   : 'text-cyber-blue/80 hover:bg-cyber-blue/10 hover:text-cyber-blue'
               }`}
             >
-              <span className="text-lg">{language.flag}</span>
-              <span className="font-medium">{language.name}</span>
+              <span className="text-xs font-medium">{language.short}</span>
+              <span className="text-xs font-medium">{language.name}</span>
             </button>
           ))}
         </div>,
