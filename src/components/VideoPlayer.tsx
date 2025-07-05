@@ -24,6 +24,7 @@ interface VideoPlayerProps {
   selectedMarker: string
   jumpToTime?: number
   initialTime?: number
+  isMobile: boolean // 新增 isMobile prop
 }
 
 const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
@@ -38,7 +39,8 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   onSetMarkerAtCurrentTime,
   selectedMarker,
   jumpToTime,
-  initialTime
+  initialTime,
+  isMobile // 接收 isMobile prop
 }, ref) => {
   const { t } = useTranslation()
   const playerRef = useRef<ReactPlayer>(null)
@@ -134,52 +136,48 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
     }
   }
 
-  if (!videoSource) {
-    return (
-      <div className="flex items-center justify-center h-64 bg-cyber-dark/50 rounded-lg border-2 border-dashed border-cyber-blue/30">
-        <div className="text-center">
-          <div className="text-cyber-blue/50 text-6xl mb-4">📹</div>
-          <p className="text-cyber-blue/70">{t('video.pleaseSelectVideoSource')}</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-2">
       <div className="relative bg-black rounded-lg overflow-hidden border border-cyber-blue/20" style={{ aspectRatio: '16/9' }}>
-        <ReactPlayer
-          ref={playerRef}
-          url={videoSource.url}
-          playing={isPlaying}
-          controls={false} // 關閉預設控制，使用自訂控制
-          width="100%"
-          height="100%"
-          onProgress={handleProgress}
-          onDuration={handleDurationChange}
-          onPlay={() => {
-            if (!isPlaying) {
-              onPlayPause(true)
-            }
-          }}
-          onPause={() => {
-            if (isPlaying) {
-              onPlayPause(false)
-              // 暫停時更新父組件的時間
-              const newTime = playerRef.current?.getCurrentTime() || 0
-              setCurrentTime(newTime)
-              onTimeUpdate(newTime)
-            }
-          }}
-          progressInterval={100}
-          onReady={() => {
-            if (initialTime && playerRef.current) {
-              playerRef.current.seekTo(initialTime, 'seconds')
-              setCurrentTime(initialTime)
-              onTimeUpdate(initialTime)
-            }
-          }}
-        />
+        {videoSource ? (
+          <ReactPlayer
+            ref={playerRef}
+            url={videoSource.url}
+            playing={isPlaying}
+            controls={false} // 關閉預設控制，使用自訂控制
+            width="100%"
+            height="100%"
+            onProgress={handleProgress}
+            onDuration={handleDurationChange}
+            onPlay={() => {
+              if (!isPlaying) {
+                onPlayPause(true)
+              }
+            }}
+            onPause={() => {
+              if (isPlaying) {
+                onPlayPause(false)
+                // 暫停時更新父組件的時間
+                const newTime = playerRef.current?.getCurrentTime() || 0
+                setCurrentTime(newTime)
+                onTimeUpdate(newTime)
+              }
+            }}
+            progressInterval={100}
+            onReady={() => {
+              if (initialTime && playerRef.current) {
+                playerRef.current.seekTo(initialTime, 'seconds')
+                setCurrentTime(initialTime)
+                onTimeUpdate(initialTime)
+              }
+            }}
+            muted={isMobile && side === 'right'} // 在手機版上，右側影片預設靜音
+          />
+        ) : (
+          <div className="flex items-center justify-center w-full h-full text-cyber-blue/70">
+            {t('video.noVideoLoaded')}
+          </div>
+        )}
       </div>
       
       {/* 獨立的標籤選單 */}

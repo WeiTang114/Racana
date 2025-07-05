@@ -66,6 +66,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
   const [rightVideoUrl, setRightVideoUrl] = useState('')
   const [showLeftInput, setShowLeftInput] = useState(false)
   const [showRightInput, setShowRightInput] = useState(false)
+  const [isMobile, setIsMobile] = useState(false) // 新增 isMobile 狀態
   
   // 保存原始檔案資訊，用於重新載入
   const [leftOriginalFile, setLeftOriginalFile] = useState<File | null>(null)
@@ -97,6 +98,14 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
 
   const location = window.location
   const navigate = (url: string) => { window.history.replaceState(null, '', url) }
+
+  // 判斷是否為行動裝置
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+    if (/android|ipad|iphone|ipod|blackberry|iemobile|opera mini/i.test(userAgent)) {
+      setIsMobile(true);
+    }
+  }, []);
 
   // 定期檢測 blob URL 有效性
   useEffect(() => {
@@ -902,369 +911,372 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
   }, [leftVideo, rightVideo, markers, location.search, location.pathname, navigate])
 
   return (
-    <>
-      <div className="space-y-2">
-        {/* 初始介面 */}
-        {!leftVideo && !rightVideo && (
-          <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 shadow-neon p-4">
-            <h2 className="text-lg font-semibold mb-3 text-cyber-blue">{t('app.welcome')}</h2>
-            <p className="text-sm text-cyber-blue/80 mb-4">
-              {t('app.welcomeDescription')}
-            </p>
-            
-            <div className="p-2 bg-cyber-dark/50 rounded-lg border border-cyber-blue/20">
-              <p className="text-xs text-cyber-blue/70">
-                {t('app.supportedFormats')}<br/>
-                {t('app.youCanAlsoEnter')}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* 主要內容區域 - 並排佈局 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-          {/* 左側影片 */}
-          <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 shadow-neon p-2">
-            <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-2">
-                <h3 className="text-sm font-semibold text-cyber-purple">{t('video.myRecording')}</h3>
-                {leftVideo?.title && (
-                  <span className="text-xs text-cyber-blue/70 truncate max-w-32" title={leftVideo.title}>
-                    - {leftVideo.title}
-                  </span>
-                )}
-              </div>
-              <div className="flex space-x-1">
-                {leftVideo ? (
-                  <button
-                    onClick={() => handleChangeVideo('left')}
-                    className="px-2 py-1 text-xs bg-cyber-dark/50 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
-                    title={t('video.changeVideo')}
-                  >
-                    {t('video.changeVideo')}
-                  </button>
-                ) : null}
-                {leftBlobInvalid && leftVideo && leftVideo.type === 'local' && (
-                  <button
-                    onClick={() => handleReloadFile('left')}
-                    className="px-2 py-1 text-xs rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300"
-                    title="檔案載入失敗，點擊重新選擇檔案"
-                  >
-                    重新選擇
-                  </button>
-                )}
-              </div>
-            </div>
-            
-            {showLeftInput || !leftVideo ? (
-              <div className="mb-2">
-                <div className="flex space-x-1">
-                  <input
-                    type="text"
-                    placeholder={t('video.videoPathOrYouTube')}
-                    value={leftVideoUrl}
-                    onChange={(e) => setLeftVideoUrl(e.target.value)}
-                    className="flex-1 px-2 py-1 bg-cyber-dark/50 border border-cyber-blue/30 rounded text-xs text-cyber-blue placeholder-cyber-blue/50 focus:outline-none focus:ring-1 focus:ring-cyber-blue focus:border-cyber-blue"
-                  />
-                  <button
-                    onClick={() => handleVideoSubmit('left')}
-                    className="px-2 py-1 bg-cyber-blue text-white rounded text-xs hover:bg-cyber-purple transition-all duration-300 font-medium"
-                  >
-                    {t('video.load')}
-                  </button>
-                  <button
-                    onClick={() => handleFileSelectWithAPI('left')}
-                    className="px-2 py-1 bg-cyber-green text-white rounded text-xs hover:bg-cyber-blue transition-all duration-300 flex items-center relative z-10 font-medium"
-                    title="選擇本地影片檔案"
-                    style={{ pointerEvents: 'auto' }}
-                  >
-                    <Upload size={12} />
-                  </button>
-                  {showLeftInput && (
-                    <button
-                      onClick={() => setShowLeftInput(false)}
-                      className="px-2 py-1 bg-cyber-dark/50 text-cyber-blue rounded text-xs hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
-                    >
-                      {t('common.cancel')}
-                    </button>
-                  )}
-                </div>
-              </div>
-            ) : null}
-            
-            {/* 隱藏的檔案輸入元素 - 移到條件渲染外部 */}
-            <input
-              ref={leftFileInputRef}
-              type="file"
-              accept="video/*"
-              onChange={(e) => handleFileChange(e, 'left')}
-              className="hidden"
-            />
-            
-            <VideoPlayer
-              ref={leftPlayerRef}
-              videoSource={leftVideo}
-              isPlaying={leftIsPlaying}
-              onPlayPause={setLeftIsPlaying}
-              onTimeUpdate={onLeftTimeUpdate}
-              onDurationChange={() => {}}
-              syncMode={syncMode}
-              side="left"
-              markers={markers}
-              onJumpToMarker={(marker) => handleJumpToMarker(marker, 'left')}
-              onSetMarkerAtCurrentTime={(label, time) => handleSetMarkerAtCurrentTime(label, time, 'left')}
-              selectedMarker={selectedMarker}
-              jumpToTime={undefined}
-              initialTime={leftInitialTime}
-            />
-          </div>
-
-          {/* 右側影片 */}
-          <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-orange/20 shadow-neon-orange p-2">
-            <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-2">
-                <h3 className="text-sm font-semibold text-cyber-orange">{t('video.expertRecording')}</h3>
-                {rightVideo?.title && (
-                  <span className="text-xs text-cyber-orange/70 truncate max-w-32" title={rightVideo.title}>
-                    - {rightVideo.title}
-                  </span>
-                )}
-              </div>
-              <div className="flex space-x-1">
-                {rightVideo ? (
-                  <button
-                    onClick={() => handleChangeVideo('right')}
-                    className="px-2 py-1 text-xs bg-cyber-dark/50 text-cyber-orange rounded hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300"
-                    title={t('video.changeVideo')}
-                  >
-                    {t('video.changeVideo')}
-                  </button>
-                ) : null}
-                {rightBlobInvalid && rightVideo && rightVideo.type === 'local' && (
-                  <button
-                    onClick={() => handleReloadFile('right')}
-                    className="px-2 py-1 text-xs rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300"
-                    title="檔案載入失敗，點擊重新選擇檔案"
-                  >
-                    重新選擇
-                  </button>
-                )}
-              </div>
-            </div>
-            
-            {showRightInput || !rightVideo ? (
-              <div className="mb-2">
-                <div className="flex space-x-1">
-                  <input
-                    type="text"
-                    placeholder={t('video.videoPathOrYouTube')}
-                    value={rightVideoUrl}
-                    onChange={(e) => setRightVideoUrl(e.target.value)}
-                    className="flex-1 px-2 py-1 bg-cyber-dark/50 border border-cyber-orange/30 rounded text-xs text-cyber-orange placeholder-cyber-orange/50 focus:outline-none focus:ring-1 focus:ring-cyber-orange focus:border-cyber-orange"
-                  />
-                  <button
-                    onClick={() => handleVideoSubmit('right')}
-                    className="px-2 py-1 bg-cyber-orange text-white rounded text-xs hover:bg-cyber-orange/80 transition-all duration-300 font-medium"
-                  >
-                    {t('video.load')}
-                  </button>
-                  <button
-                    onClick={() => handleFileSelectWithAPI('right')}
-                    className="px-2 py-1 bg-cyber-green text-white rounded text-xs hover:bg-cyber-orange transition-all duration-300 flex items-center relative z-10 font-medium"
-                    title="選擇本地影片檔案"
-                    style={{ pointerEvents: 'auto' }}
-                  >
-                    <Upload size={12} />
-                  </button>
-                  {showRightInput && (
-                    <button
-                      onClick={() => setShowRightInput(false)}
-                      className="px-2 py-1 bg-cyber-dark/50 text-cyber-orange rounded text-xs hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300"
-                    >
-                      {t('common.cancel')}
-                    </button>
-                  )}
-                </div>
-              </div>
-            ) : null}
-            
-            {/* 隱藏的檔案輸入元素 */}
-            <input
-              ref={rightFileInputRef}
-              type="file"
-              accept="video/*"
-              onChange={(e) => handleFileChange(e, 'right')}
-              className="hidden"
-            />
-            
-            <VideoPlayer
-              ref={rightPlayerRef}
-              videoSource={rightVideo}
-              isPlaying={rightIsPlaying}
-              onPlayPause={setRightIsPlaying}
-              onTimeUpdate={onRightTimeUpdate}
-              onDurationChange={() => {}}
-              syncMode={syncMode}
-              side="right"
-              markers={markers}
-              onJumpToMarker={(marker) => handleJumpToMarker(marker, 'right')}
-              onSetMarkerAtCurrentTime={(label, time) => handleSetMarkerAtCurrentTime(label, time, 'right')}
-              selectedMarker={selectedMarker}
-              jumpToTime={undefined}
-              initialTime={rightInitialTime}
-            />
-          </div>
-        </div>
-
-        {/* 播放控制 - 移到下方 */}
-        <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 p-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-semibold text-cyber-blue">{t('controls.playbackControl')}</h3>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handleGlobalPlayPause}
-                className="p-2 bg-cyber-blue/80 text-white rounded-full hover:bg-cyber-blue transition-all duration-300"
-              >
-                {isPlaying ? <Pause size={16} /> : <Play size={16} />}
-              </button>
-              
-              <button
-                onClick={handleStepBackward}
-                className="p-1.5 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
-                title={t('controls.frameBackward')}
-              >
-                <SkipBack size={14} />
-              </button>
-              
-              <button
-                onClick={handleStepForward}
-                className="p-1.5 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
-                title={t('controls.frameForward')}
-              >
-                <SkipForward size={14} />
-              </button>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <span className="text-xs text-cyber-blue/70">{t('controls.playbackMode')}:</span>
-              <button
-                onClick={() => setSyncMode(!syncMode)}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 ${
-                  syncMode 
-                    ? 'bg-cyber-green/30 text-cyber-green border border-cyber-green/30' 
-                    : 'bg-cyber-dark/50 text-cyber-blue/70 border border-cyber-blue/20 hover:bg-cyber-blue/10'
-                }`}
-              >
-                {syncMode ? t('controls.syncPlayback') : t('controls.independentPlayback')}
-              </button>
-              
-              <button
-                onClick={clearSessionData}
-                className="px-3 py-1.5 bg-cyber-dark/50 text-cyber-red/70 rounded text-xs font-medium hover:bg-cyber-red/20 border border-cyber-red/20 transition-all duration-300"
-                title={t('controls.clearAllSavedData')}
-              >
-                {t('controls.clearData')}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* 標籤管理 - 簡化版 */}
-        <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-purple/20 p-2">
-          <h3 className="text-sm font-semibold mb-1 text-cyber-purple">{t('markers.markerManagement')}</h3>
+    <div className="space-y-2">
+      {/* 初始介面 */}
+      {!leftVideo && !rightVideo && (
+        <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 shadow-neon p-4">
+          <h2 className="text-lg font-semibold mb-3 text-cyber-blue">{t('app.welcome')}</h2>
+          <p className="text-sm text-cyber-blue/80 mb-4">
+            {t('app.welcomeDescription')}
+          </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1.5">
-            {markers.map((marker) => (
-              <div
-                key={marker.id}
-                className={`p-1.5 rounded border text-xs backdrop-blur-sm transition-all duration-300 ${
+          <div className="p-2 bg-cyber-dark/50 rounded-lg border border-cyber-blue/20">
+            <p className="text-xs text-cyber-blue/70">
+              {t('app.supportedFormats')}<br/>
+              {t('app.youCanAlsoEnter')}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* 主要內容區域 - 並排佈局 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+        {/* 左側影片 */}
+        <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 shadow-neon p-2">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center space-x-2">
+              <h3 className="text-sm font-semibold text-cyber-purple">{t('video.myRecording')}</h3>
+              {leftVideo?.title && (
+                <span className="text-xs text-cyber-blue/70 truncate max-w-32" title={leftVideo.title}>
+                  - {leftVideo.title}
+                </span>
+              )}
+            </div>
+            <div className="flex space-x-1">
+              {leftVideo ? (
+                <button
+                  onClick={() => handleChangeVideo('left')}
+                  className="px-2 py-1 text-xs bg-cyber-dark/50 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
+                  title={t('video.changeVideo')}
+                >
+                  {t('video.changeVideo')}
+                </button>
+              ) : null}
+              {leftBlobInvalid && leftVideo && leftVideo.type === 'local' && (
+                <button
+                  onClick={() => handleReloadFile('left')}
+                  className="px-2 py-1 text-xs rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300"
+                  title="檔案載入失敗，點擊重新選擇檔案"
+                >
+                  重新選擇
+                </button>
+              )}
+            </div>
+          </div>
+          
+          {showLeftInput || !leftVideo ? (
+            <div className="mb-2">
+              <div className="flex space-x-1">
+                <input
+                  type="text"
+                  placeholder={t('video.videoPathOrYouTube')}
+                  value={leftVideoUrl}
+                  onChange={(e) => setLeftVideoUrl(e.target.value)}
+                  className="flex-1 px-2 py-1 bg-cyber-dark/50 border border-cyber-blue/30 rounded text-xs text-cyber-blue placeholder-cyber-blue/50 focus:outline-none focus:ring-1 focus:ring-cyber-blue focus:border-cyber-blue"
+                />
+                <button
+                  onClick={() => handleVideoSubmit('left')}
+                  className="px-2 py-1 bg-cyber-blue text-white rounded text-xs hover:bg-cyber-purple transition-all duration-300 font-medium"
+                >
+                  {t('video.load')}
+                </button>
+                <button
+                  onClick={() => handleFileSelectWithAPI('left')}
+                  className="px-2 py-1 bg-cyber-green text-white rounded text-xs hover:bg-cyber-blue transition-all duration-300 flex items-center relative z-10 font-medium"
+                  title="選擇本地影片檔案"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <Upload size={12} />
+                </button>
+                {showLeftInput && (
+                  <button
+                    onClick={() => setShowLeftInput(false)}
+                    className="px-2 py-1 bg-cyber-dark/50 text-cyber-blue rounded text-xs hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
+                  >
+                    {t('common.cancel')}
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : null}
+          
+          {/* 隱藏的檔案輸入元素 - 移到條件渲染外部 */}
+          <input
+            ref={leftFileInputRef}
+            type="file"
+            accept="video/*"
+            onChange={(e) => handleFileChange(e, 'left')}
+            className="hidden"
+          />
+          
+          <VideoPlayer
+            ref={leftPlayerRef}
+            videoSource={leftVideo}
+            isPlaying={leftIsPlaying}
+            onPlayPause={setLeftIsPlaying}
+            onTimeUpdate={onLeftTimeUpdate}
+            onDurationChange={() => {}}
+            syncMode={syncMode}
+            side="left"
+            markers={markers}
+            onJumpToMarker={(marker) => handleJumpToMarker(marker, 'left')}
+            onSetMarkerAtCurrentTime={(label, time) => handleSetMarkerAtCurrentTime(label, time, 'left')}
+            selectedMarker={selectedMarker}
+            jumpToTime={undefined}
+            initialTime={leftInitialTime}
+            isMobile={isMobile}
+          />
+        </div>
+
+        {/* 右側影片 */}
+        <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-orange/20 shadow-neon-orange p-2">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center space-x-2">
+              <h3 className="text-sm font-semibold text-cyber-orange">
+                {t('video.expertRecording')}
+                {isMobile && <span className="text-xs text-cyber-orange/70 ml-1">(靜音)</span>}
+              </h3>
+              {rightVideo?.title && (
+                <span className="text-xs text-cyber-orange/70 truncate max-w-32" title={rightVideo.title}>
+                  - {rightVideo.title}
+                </span>
+              )}
+            </div>
+            <div className="flex space-x-1">
+              {rightVideo ? (
+                <button
+                  onClick={() => handleChangeVideo('right')}
+                  className="px-2 py-1 text-xs bg-cyber-dark/50 text-cyber-orange rounded hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300"
+                  title={t('video.changeVideo')}
+                >
+                  {t('video.changeVideo')}
+                </button>
+              ) : null}
+              {rightBlobInvalid && rightVideo && rightVideo.type === 'local' && (
+                <button
+                  onClick={() => handleReloadFile('right')}
+                  className="px-2 py-1 text-xs rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300"
+                  title="檔案載入失敗，點擊重新選擇檔案"
+                >
+                  重新選擇
+                </button>
+              )}
+            </div>
+          </div>
+          
+          {showRightInput || !rightVideo ? (
+            <div className="mb-2">
+              <div className="flex space-x-1">
+                <input
+                  type="text"
+                  placeholder={t('video.videoPathOrYouTube')}
+                  value={rightVideoUrl}
+                  onChange={(e) => setRightVideoUrl(e.target.value)}
+                  className="flex-1 px-2 py-1 bg-cyber-dark/50 border border-cyber-orange/30 rounded text-xs text-cyber-orange placeholder-cyber-orange/50 focus:outline-none focus:ring-1 focus:ring-cyber-orange focus:border-cyber-orange"
+                />
+                <button
+                  onClick={() => handleVideoSubmit('right')}
+                  className="px-2 py-1 bg-cyber-orange text-white rounded text-xs hover:bg-cyber-orange/80 transition-all duration-300 font-medium"
+                >
+                  {t('video.load')}
+                </button>
+                <button
+                  onClick={() => handleFileSelectWithAPI('right')}
+                  className="px-2 py-1 bg-cyber-green text-white rounded text-xs hover:bg-cyber-orange transition-all duration-300 flex items-center relative z-10 font-medium"
+                  title="選擇本地影片檔案"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <Upload size={12} />
+                </button>
+                {showRightInput && (
+                  <button
+                    onClick={() => setShowRightInput(false)}
+                    className="px-2 py-1 bg-cyber-dark/50 text-cyber-orange rounded text-xs hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300"
+                  >
+                    {t('common.cancel')}
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : null}
+          
+          {/* 隱藏的檔案輸入元素 */}
+          <input
+            ref={rightFileInputRef}
+            type="file"
+            accept="video/*"
+            onChange={(e) => handleFileChange(e, 'right')}
+            className="hidden"
+          />
+          
+          <VideoPlayer
+            ref={rightPlayerRef}
+            videoSource={rightVideo}
+            isPlaying={rightIsPlaying}
+            onPlayPause={setRightIsPlaying}
+            onTimeUpdate={onRightTimeUpdate}
+            onDurationChange={() => {}}
+            syncMode={syncMode}
+            side="right"
+            markers={markers}
+            onJumpToMarker={(marker) => handleJumpToMarker(marker, 'right')}
+            onSetMarkerAtCurrentTime={(label, time) => handleSetMarkerAtCurrentTime(label, time, 'right')}
+            selectedMarker={selectedMarker}
+            jumpToTime={undefined}
+            initialTime={rightInitialTime}
+            isMobile={isMobile}
+          />
+        </div>
+      </div>
+
+      {/* 播放控制 - 移到下方 */}
+      <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 p-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <h3 className="text-sm font-semibold text-cyber-blue">{t('controls.playbackControl')}</h3>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleGlobalPlayPause}
+              className="p-2 bg-cyber-blue/80 text-white rounded-full hover:bg-cyber-blue transition-all duration-300"
+            >
+              {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+            </button>
+            
+            <button
+              onClick={handleStepBackward}
+              className="p-1.5 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
+              title={t('controls.frameBackward')}
+            >
+              <SkipBack size={14} />
+            </button>
+            
+            <button
+              onClick={handleStepForward}
+              className="p-1.5 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
+              title={t('controls.frameForward')}
+            >
+              <SkipForward size={14} />
+            </button>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <span className="text-xs text-cyber-blue/70">{t('controls.playbackMode')}:</span>
+            <button
+              onClick={() => setSyncMode(!syncMode)}
+              className={`px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 ${
+                syncMode 
+                  ? 'bg-cyber-green/30 text-cyber-green border border-cyber-green/30' 
+                  : 'bg-cyber-dark/50 text-cyber-blue/70 border border-cyber-blue/20 hover:bg-cyber-blue/10'
+              }`}
+            >
+              {syncMode ? t('controls.syncPlayback') : t('controls.independentPlayback')}
+            </button>
+            
+            <button
+              onClick={clearSessionData}
+              className="px-3 py-1.5 bg-cyber-dark/50 text-cyber-red/70 rounded text-xs font-medium hover:bg-cyber-red/20 border border-cyber-red/20 transition-all duration-300"
+              title={t('controls.clearAllSavedData')}
+            >
+              {t('controls.clearData')}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 標籤管理 - 簡化版 */}
+      <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-purple/20 p-2">
+        <h3 className="text-sm font-semibold mb-1 text-cyber-purple">{t('markers.markerManagement')}</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1.5">
+          {markers.map((marker) => (
+            <div
+              key={marker.id}
+              className={`p-1.5 rounded border text-xs backdrop-blur-sm transition-all duration-300 ${
+                selectedMarker === marker.label 
+                  ? 'border-cyber-pink bg-cyber-pink/20' 
+                  : 'border-cyber-purple/30 bg-cyber-dark/50 hover:bg-cyber-purple/20'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className={`px-1 py-0.5 rounded text-xs font-medium ${
                   selectedMarker === marker.label 
-                    ? 'border-cyber-pink bg-cyber-pink/20' 
-                    : 'border-cyber-purple/30 bg-cyber-dark/50 hover:bg-cyber-purple/20'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className={`px-1 py-0.5 rounded text-xs font-medium ${
-                    selectedMarker === marker.label 
-                      ? 'bg-cyber-pink/90 text-white' 
-                      : 'bg-cyber-purple/90 text-white'
-                  }`}>
-                    {marker.label}
-                  </span>
-                  <div className="flex space-x-1">
+                    ? 'bg-cyber-pink/90 text-white' 
+                    : 'bg-cyber-purple/90 text-white'
+                }`}>
+                  {marker.label}
+                </span>
+                <div className="flex space-x-1">
+                  <button
+                    onClick={() => setSelectedMarker(marker.label)}
+                    className="text-xs text-cyber-blue hover:text-cyber-neon transition-colors duration-300"
+                  >
+                    {selectedMarker === marker.label ? '✓' : t('markers.select')}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteMarker(marker.id)}
+                    className="text-cyber-red hover:text-cyber-pink transition-colors duration-300"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+              
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-1">
+                    <span className="text-xs text-cyber-blue/70">{t('video.left')}:</span>
+                    <span className="text-xs text-cyber-blue">
+                      {marker.leftTime !== undefined ? formatTime(marker.leftTime) : '-'}
+                    </span>
                     <button
-                      onClick={() => setSelectedMarker(marker.label)}
-                      className="text-xs text-cyber-blue hover:text-cyber-neon transition-colors duration-300"
+                      onClick={() => handleJumpToMarker(marker, 'left')}
+                      disabled={marker.leftTime === undefined}
+                      className="px-1 py-0.5 text-xs bg-cyber-blue/30 text-cyber-blue rounded hover:bg-cyber-blue/40 disabled:opacity-50 transition-all duration-300"
                     >
-                      {selectedMarker === marker.label ? '✓' : t('markers.select')}
+                      {t('markers.jump')}
                     </button>
+                  </div>
+                  
+                  <div className="flex items-center space-x-1">
+                    <span className="text-xs text-cyber-orange/70">{t('video.right')}:</span>
+                    <span className="text-xs text-cyber-orange">
+                      {marker.rightTime !== undefined ? formatTime(marker.rightTime) : '-'}
+                    </span>
                     <button
-                      onClick={() => handleDeleteMarker(marker.id)}
-                      className="text-cyber-red hover:text-cyber-pink transition-colors duration-300"
+                      onClick={() => handleJumpToMarker(marker, 'right')}
+                      disabled={marker.rightTime === undefined}
+                      className="px-1 py-0.5 text-xs bg-cyber-orange/30 text-cyber-orange rounded hover:bg-cyber-orange/40 disabled:opacity-50 transition-all duration-300"
                     >
-                      ×
+                      {t('markers.jump')}
                     </button>
                   </div>
                 </div>
                 
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1">
-                      <span className="text-xs text-cyber-blue/70">{t('video.left')}:</span>
-                      <span className="text-xs text-cyber-blue">
-                        {marker.leftTime !== undefined ? formatTime(marker.leftTime) : '-'}
-                      </span>
-                      <button
-                        onClick={() => handleJumpToMarker(marker, 'left')}
-                        disabled={marker.leftTime === undefined}
-                        className="px-1 py-0.5 text-xs bg-cyber-blue/30 text-cyber-blue rounded hover:bg-cyber-blue/40 disabled:opacity-50 transition-all duration-300"
-                      >
-                        {t('markers.jump')}
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center space-x-1">
-                      <span className="text-xs text-cyber-orange/70">{t('video.right')}:</span>
-                      <span className="text-xs text-cyber-orange">
-                        {marker.rightTime !== undefined ? formatTime(marker.rightTime) : '-'}
-                      </span>
-                      <button
-                        onClick={() => handleJumpToMarker(marker, 'right')}
-                        disabled={marker.rightTime === undefined}
-                        className="px-1 py-0.5 text-xs bg-cyber-orange/30 text-cyber-orange rounded hover:bg-cyber-orange/40 disabled:opacity-50 transition-all duration-300"
-                      >
-                        {t('markers.jump')}
-                      </button>
-                    </div>
-                  </div>
-                  
-                  {/* 同步跳轉按鈕 */}
-                  <div className="flex justify-center pt-0.5">
-                    <button
-                      onClick={() => handleSyncJumpToMarker(marker)}
-                      disabled={marker.leftTime === undefined || marker.rightTime === undefined}
-                      className="px-1.5 py-0.5 text-xs bg-cyber-green/90 text-white rounded hover:bg-cyber-green transition-all duration-300"
-                      title={t('markers.syncJumpToMarker')}
-                    >
-                      {t('markers.syncJump')}
-                    </button>
-                  </div>
+                {/* 同步跳轉按鈕 */}
+                <div className="flex justify-center pt-0.5">
+                  <button
+                    onClick={() => handleSyncJumpToMarker(marker)}
+                    disabled={marker.leftTime === undefined || marker.rightTime === undefined}
+                    className="px-1.5 py-0.5 text-xs bg-cyber-green/90 text-white rounded hover:bg-cyber-green transition-all duration-300"
+                    title={t('markers.syncJumpToMarker')}
+                  >
+                    {t('markers.syncJump')}
+                  </button>
                 </div>
               </div>
-            ))}
-            
-            {markers.length === 0 && (
-              <div className="col-span-full text-center text-cyber-blue/50 py-1 text-xs">
-                {t('markers.noMarkersAdded')}
-              </div>
-            )}
-          </div>
+            </div>
+          ))}
+          
+          {markers.length === 0 && (
+            <div className="col-span-full text-center text-cyber-blue/50 py-1 text-xs">
+              {t('markers.noMarkersAdded')}
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
