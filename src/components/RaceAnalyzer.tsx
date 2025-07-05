@@ -935,9 +935,9 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
         <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 shadow-neon p-2">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-semibold text-cyber-purple">{t('video.myRecording')}</h3>
+              <h3 className={`font-semibold text-cyber-purple ${isMobile ? 'text-xs' : 'text-sm'}`}>{t('video.myRecording')}</h3>
               {leftVideo?.title && (
-                <span className="text-xs text-cyber-blue/70 truncate max-w-32" title={leftVideo.title}>
+                <span className={`text-cyber-blue/70 truncate ${isMobile ? 'text-xs max-w-20' : 'text-xs max-w-32'}`} title={leftVideo.title}>
                   - {leftVideo.title}
                 </span>
               )}
@@ -946,19 +946,19 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
               {leftVideo ? (
                 <button
                   onClick={() => handleChangeVideo('left')}
-                  className="px-2 py-1 text-xs bg-cyber-dark/50 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
+                  className={`bg-cyber-dark/50 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
                   title={t('video.changeVideo')}
                 >
-                  {t('video.changeVideo')}
+                  {isMobile ? '切換' : t('video.changeVideo')}
                 </button>
               ) : null}
               {leftBlobInvalid && leftVideo && leftVideo.type === 'local' && (
                 <button
                   onClick={() => handleReloadFile('left')}
-                  className="px-2 py-1 text-xs rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300"
+                  className={`rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
                   title="檔案載入失敗，點擊重新選擇檔案"
                 >
-                  重新選擇
+                  {isMobile ? '重選' : '重新選擇'}
                 </button>
               )}
             </div>
@@ -1032,12 +1032,12 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
         <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-orange/20 shadow-neon-orange p-2">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-semibold text-cyber-orange">
+              <h3 className={`font-semibold text-cyber-orange ${isMobile ? 'text-xs' : 'text-sm'}`}>
                 {t('video.expertRecording')}
                 {isMobile && <span className="text-xs text-cyber-orange/70 ml-1">(靜音)</span>}
               </h3>
               {rightVideo?.title && (
-                <span className="text-xs text-cyber-orange/70 truncate max-w-32" title={rightVideo.title}>
+                <span className={`text-cyber-orange/70 truncate ${isMobile ? 'text-xs max-w-20' : 'text-xs max-w-32'}`} title={rightVideo.title}>
                   - {rightVideo.title}
                 </span>
               )}
@@ -1046,19 +1046,19 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
               {rightVideo ? (
                 <button
                   onClick={() => handleChangeVideo('right')}
-                  className="px-2 py-1 text-xs bg-cyber-dark/50 text-cyber-orange rounded hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300"
+                  className={`bg-cyber-dark/50 text-cyber-orange rounded hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
                   title={t('video.changeVideo')}
                 >
-                  {t('video.changeVideo')}
+                  {isMobile ? '切換' : t('video.changeVideo')}
                 </button>
               ) : null}
               {rightBlobInvalid && rightVideo && rightVideo.type === 'local' && (
                 <button
                   onClick={() => handleReloadFile('right')}
-                  className="px-2 py-1 text-xs rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300"
+                  className={`rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
                   title="檔案載入失敗，點擊重新選擇檔案"
                 >
-                  重新選擇
+                  {isMobile ? '重選' : '重新選擇'}
                 </button>
               )}
             </div>
@@ -1133,53 +1133,53 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
       <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <h3 className="text-sm font-semibold text-cyber-blue">{t('controls.playbackControl')}</h3>
+            <h3 className={`font-semibold text-cyber-blue ${isMobile ? 'text-xs' : 'text-sm'}`}>{t('controls.playbackControl')}</h3>
           </div>
           
           <div className="flex items-center space-x-2">
             <button
               onClick={handleGlobalPlayPause}
-              className="p-2 bg-cyber-blue/80 text-white rounded-full hover:bg-cyber-blue transition-all duration-300"
+              className={`bg-cyber-blue/80 text-white rounded-full hover:bg-cyber-blue transition-all duration-300 ${isMobile ? 'p-1.5' : 'p-2'}`}
             >
-              {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+              {isPlaying ? <Pause size={isMobile ? 14 : 16} /> : <Play size={isMobile ? 14 : 16} />}
             </button>
             
             <button
               onClick={handleStepBackward}
-              className="p-1.5 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
+              className={`bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300 ${isMobile ? 'p-1' : 'p-1.5'}`}
               title={t('controls.frameBackward')}
             >
-              <SkipBack size={14} />
+              <SkipBack size={isMobile ? 12 : 14} />
             </button>
             
             <button
               onClick={handleStepForward}
-              className="p-1.5 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
+              className={`bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300 ${isMobile ? 'p-1' : 'p-1.5'}`}
               title={t('controls.frameForward')}
             >
-              <SkipForward size={14} />
+              <SkipForward size={isMobile ? 12 : 14} />
             </button>
           </div>
           
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-cyber-blue/70">{t('controls.playbackMode')}:</span>
+          <div className={`flex items-center space-x-2 ${isMobile ? 'flex-wrap justify-center' : ''}`}>
+            <span className={`text-cyber-blue/70 ${isMobile ? 'text-xs' : 'text-xs'}`}>{t('controls.playbackMode')}:</span>
             <button
               onClick={() => setSyncMode(!syncMode)}
-              className={`px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 ${
+              className={`rounded font-medium transition-all duration-300 ${
                 syncMode 
                   ? 'bg-cyber-green/30 text-cyber-green border border-cyber-green/30' 
                   : 'bg-cyber-dark/50 text-cyber-blue/70 border border-cyber-blue/20 hover:bg-cyber-blue/10'
-              }`}
+              } ${isMobile ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-xs'}`}
             >
-              {syncMode ? t('controls.syncPlayback') : t('controls.independentPlayback')}
+              {syncMode ? (isMobile ? '同步' : t('controls.syncPlayback')) : (isMobile ? '獨立' : t('controls.independentPlayback'))}
             </button>
             
             <button
               onClick={clearSessionData}
-              className="px-3 py-1.5 bg-cyber-dark/50 text-cyber-red/70 rounded text-xs font-medium hover:bg-cyber-red/20 border border-cyber-red/20 transition-all duration-300"
+              className={`bg-cyber-dark/50 text-cyber-red/70 rounded font-medium hover:bg-cyber-red/20 border border-cyber-red/20 transition-all duration-300 ${isMobile ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-xs'}`}
               title={t('controls.clearAllSavedData')}
             >
-              {t('controls.clearData')}
+              {isMobile ? '清除' : t('controls.clearData')}
             </button>
           </div>
         </div>
@@ -1187,32 +1187,32 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
 
       {/* 標籤管理 - 簡化版 */}
       <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-purple/20 p-2">
-        <h3 className="text-sm font-semibold mb-1 text-cyber-purple">{t('markers.markerManagement')}</h3>
+        <h3 className={`font-semibold mb-1 text-cyber-purple ${isMobile ? 'text-xs' : 'text-sm'}`}>{t('markers.markerManagement')}</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1.5">
+        <div className={`grid gap-1.5 ${isMobile ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'}`}>
           {markers.map((marker) => (
             <div
               key={marker.id}
-              className={`p-1.5 rounded border text-xs backdrop-blur-sm transition-all duration-300 ${
+              className={`rounded border backdrop-blur-sm transition-all duration-300 ${
                 selectedMarker === marker.label 
                   ? 'border-cyber-pink bg-cyber-pink/20' 
                   : 'border-cyber-purple/30 bg-cyber-dark/50 hover:bg-cyber-purple/20'
-              }`}
+              } ${isMobile ? 'p-1 text-xs' : 'p-1.5 text-xs'}`}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className={`px-1 py-0.5 rounded text-xs font-medium ${
+                <span className={`px-1 py-0.5 rounded font-medium ${
                   selectedMarker === marker.label 
                     ? 'bg-cyber-pink/90 text-white' 
                     : 'bg-cyber-purple/90 text-white'
-                }`}>
+                } ${isMobile ? 'text-xs' : 'text-xs'}`}>
                   {marker.label}
                 </span>
                 <div className="flex space-x-1">
                   <button
                     onClick={() => setSelectedMarker(marker.label)}
-                    className="text-xs text-cyber-blue hover:text-cyber-neon transition-colors duration-300"
+                    className={`text-cyber-blue hover:text-cyber-neon transition-colors duration-300 ${isMobile ? 'text-xs' : 'text-xs'}`}
                   >
-                    {selectedMarker === marker.label ? '✓' : t('markers.select')}
+                    {selectedMarker === marker.label ? '✓' : (isMobile ? '選' : t('markers.select'))}
                   </button>
                   <button
                     onClick={() => handleDeleteMarker(marker.id)}
@@ -1224,32 +1224,32 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
               </div>
               
               <div className="space-y-1">
-                <div className="flex items-center justify-between">
+                <div className={`flex items-center justify-between ${isMobile ? 'flex-col space-y-1' : ''}`}>
                   <div className="flex items-center space-x-1">
-                    <span className="text-xs text-cyber-blue/70">{t('video.left')}:</span>
-                    <span className="text-xs text-cyber-blue">
+                    <span className={`text-cyber-blue/70 ${isMobile ? 'text-xs' : 'text-xs'}`}>{isMobile ? '左' : t('video.left')}:</span>
+                    <span className={`text-cyber-blue ${isMobile ? 'text-xs' : 'text-xs'}`}>
                       {marker.leftTime !== undefined ? formatTime(marker.leftTime) : '-'}
                     </span>
                     <button
                       onClick={() => handleJumpToMarker(marker, 'left')}
                       disabled={marker.leftTime === undefined}
-                      className="px-1 py-0.5 text-xs bg-cyber-blue/30 text-cyber-blue rounded hover:bg-cyber-blue/40 disabled:opacity-50 transition-all duration-300"
+                      className={`bg-cyber-blue/30 text-cyber-blue rounded hover:bg-cyber-blue/40 disabled:opacity-50 transition-all duration-300 ${isMobile ? 'px-0.5 py-0.5 text-xs' : 'px-1 py-0.5 text-xs'}`}
                     >
-                      {t('markers.jump')}
+                      {isMobile ? '跳' : t('markers.jump')}
                     </button>
                   </div>
                   
                   <div className="flex items-center space-x-1">
-                    <span className="text-xs text-cyber-orange/70">{t('video.right')}:</span>
-                    <span className="text-xs text-cyber-orange">
+                    <span className={`text-cyber-orange/70 ${isMobile ? 'text-xs' : 'text-xs'}`}>{isMobile ? '右' : t('video.right')}:</span>
+                    <span className={`text-cyber-orange ${isMobile ? 'text-xs' : 'text-xs'}`}>
                       {marker.rightTime !== undefined ? formatTime(marker.rightTime) : '-'}
                     </span>
                     <button
                       onClick={() => handleJumpToMarker(marker, 'right')}
                       disabled={marker.rightTime === undefined}
-                      className="px-1 py-0.5 text-xs bg-cyber-orange/30 text-cyber-orange rounded hover:bg-cyber-orange/40 disabled:opacity-50 transition-all duration-300"
+                      className={`bg-cyber-orange/30 text-cyber-orange rounded hover:bg-cyber-orange/40 disabled:opacity-50 transition-all duration-300 ${isMobile ? 'px-0.5 py-0.5 text-xs' : 'px-1 py-0.5 text-xs'}`}
                     >
-                      {t('markers.jump')}
+                      {isMobile ? '跳' : t('markers.jump')}
                     </button>
                   </div>
                 </div>
@@ -1259,10 +1259,10 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                   <button
                     onClick={() => handleSyncJumpToMarker(marker)}
                     disabled={marker.leftTime === undefined || marker.rightTime === undefined}
-                    className="px-1.5 py-0.5 text-xs bg-cyber-green/90 text-white rounded hover:bg-cyber-green transition-all duration-300"
+                    className={`bg-cyber-green/90 text-white rounded hover:bg-cyber-green transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-1.5 py-0.5 text-xs'}`}
                     title={t('markers.syncJumpToMarker')}
                   >
-                    {t('markers.syncJump')}
+                    {isMobile ? '同步跳' : t('markers.syncJump')}
                   </button>
                 </div>
               </div>
@@ -1271,7 +1271,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
           
           {markers.length === 0 && (
             <div className="col-span-full text-center text-cyber-blue/50 py-1 text-xs">
-              {t('markers.noMarkersAdded')}
+              {isMobile ? '無標籤' : t('markers.noMarkersAdded')}
             </div>
           )}
         </div>
