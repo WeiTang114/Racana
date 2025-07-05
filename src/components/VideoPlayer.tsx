@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback, useImperativeHandle, forwardRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
 import { VideoSource, VideoSide, Marker } from '../types'
 import { Play, Pause, SkipBack, SkipForward } from 'lucide-react'
@@ -36,6 +37,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   selectedMarker,
   jumpToTime
 }, ref) => {
+  const { t } = useTranslation()
   const playerRef = useRef<ReactPlayer>(null)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
@@ -170,7 +172,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
       <div className="flex items-center justify-center h-64 bg-cyber-dark/50 rounded-lg border-2 border-dashed border-cyber-blue/30">
         <div className="text-center">
           <div className="text-cyber-blue/50 text-6xl mb-4">📹</div>
-          <p className="text-cyber-blue/70">請選擇影片來源</p>
+          <p className="text-cyber-blue/70">{t('video.pleaseSelectVideoSource')}</p>
         </div>
       </div>
     )
@@ -218,7 +220,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
             <button
               onClick={handleStepBackward}
               className="p-1 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
-              title="逐幀後退"
+              title={t('controls.frameBackward')}
             >
               <SkipBack size={12} />
             </button>
@@ -233,7 +235,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
             <button
               onClick={handleStepForward}
               className="p-1 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
-              title="逐幀前進"
+              title={t('controls.frameForward')}
             >
               <SkipForward size={12} />
             </button>
@@ -241,7 +243,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
           
           {/* 右側：標籤設置 */}
           <div className="flex items-center space-x-1">
-            <div className="text-xs font-medium text-cyber-purple">設置標籤：</div>
+            <div className="text-xs font-medium text-cyber-purple">{t('markers.setMarker')}：</div>
             <div className="flex space-x-1">
               {['1', '2', '3', '4', '5'].map((label) => (
                 <button
@@ -293,7 +295,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
                 className="absolute top-0 transform -translate-x-1/2 cursor-pointer"
                 style={{ left: `${markerPosition}%` }}
                 onClick={() => onJumpToMarker(marker)}
-                title={`標籤 ${marker.label}: ${formatTime(markerTime)}`}
+                title={`${t('markers.marker')} ${marker.label}: ${formatTime(markerTime)}`}
               >
                 <div className={`w-2 h-2 rounded-full border border-cyber-blue hover:scale-110 transition-all duration-300 ${
                   selectedMarker === marker.label ? 'bg-cyber-pink/90' : 'bg-cyber-blue'

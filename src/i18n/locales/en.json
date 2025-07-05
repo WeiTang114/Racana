@@ -1,0 +1,115 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "submit": "Submit",
+    "report": "Report"
+  },
+  "app": {
+    "title": "RaceAna - Racing Analysis Tool",
+    "welcome": "Welcome to RaceAna",
+    "welcomeDescription": "Please select or enter video sources below to start analysis. You can load local video files or enter YouTube URLs.",
+    "supportedFormats": "Supported video formats: MP4, WebM, OGG, AVI, MOV, WMV",
+    "youCanAlsoEnter": "You can also enter YouTube URLs or local file paths"
+  },
+  "video": {
+    "selectSource": "Select Video Source",
+    "videoPathOrYouTube": "Video path or YouTube URL",
+    "load": "Load",
+    "changeVideo": "Change Video",
+    "leftVideo": "Left Video",
+    "rightVideo": "Right Video",
+    "myRecording": "My Recording",
+    "expertRecording": "Expert Recording",
+    "localFile": "Local File",
+    "youtubeVideo": "YouTube Video",
+    "pleaseSelectVideoSource": "Please select video source",
+    "left": "Left",
+    "right": "Right",
+    "video": "Video",
+    "myRecordingSource": "My Recording Source",
+    "expertRecordingSource": "Expert Recording Source",
+    "enterLocalPathOrYouTube": "Enter local file path or YouTube URL",
+    "loaded": "Loaded"
+  },
+  "controls": {
+    "play": "Play",
+    "pause": "Pause",
+    "stepForward": "Step Forward",
+    "stepBackward": "Step Backward",
+    "jumpForward": "Jump Forward",
+    "jumpBackward": "Jump Backward",
+    "syncMode": "Sync Mode",
+    "independentMode": "Independent Mode",
+    "playbackControl": "Playback Control",
+    "frameForward": "Frame Forward",
+    "frameBackward": "Frame Backward",
+    "playbackMode": "Playback Mode",
+    "syncPlayback": "Sync Playback",
+    "independentPlayback": "Independent Playback",
+    "clearData": "Clear Data",
+    "clearAllSavedData": "Clear all saved data"
+  },
+  "markers": {
+    "setMarker": "Set Marker",
+    "jumpToMarker": "Jump to Marker",
+    "syncJump": "Sync Jump",
+    "marker": "Marker",
+    "time": "Time",
+    "setMarkerAtCurrentTime": "Set Marker:",
+    "markerManagement": "Marker Management",
+    "select": "Select",
+    "jump": "Jump",
+    "syncJumpToMarker": "Jump to marker time points on both left and right sides simultaneously",
+    "noMarkersAdded": "No markers added yet",
+    "selected": "Selected",
+    "timeFormat": "MM:SS",
+    "notSet": "Not Set"
+  },
+  "help": {
+    "title": "User Guide",
+    "shortcuts": "Keyboard Shortcuts",
+    "globalControls": "Global Controls",
+    "leftVideoControls": "Left Video Controls",
+    "rightVideoControls": "Right Video Controls",
+    "markerControls": "Marker Controls",
+    "features": "Main Features",
+    "authorInfo": "Author Information",
+    "bugReport": "Bug Report",
+    "reportDescription": "If you encounter any issues during use or have feature suggestions, please report them to us via GitHub Issues!",
+    "reportButton": "Report Issue"
+  },
+  "shortcuts": {
+    "playPause": "Play/Pause",
+    "stepForward": "Step Forward",
+    "stepBackward": "Step Backward",
+    "fastForward": "Fast Forward 5s",
+    "rewind": "Rewind 5s",
+    "setMarkers": "Set Markers 1-5",
+    "jumpToMarker": "Jump to Marker",
+    "syncJump": "Sync Jump"
+  },
+  "features": {
+    "localAndYouTube": "Support for local video files and YouTube video loading",
+    "syncOrIndependent": "Left and right videos can be controlled synchronously or independently",
+    "frameControl": "Precise frame-by-frame control for detailed action analysis",
+    "markerSystem": "Marker system for marking important time points and quick navigation",
+    "visualTimeline": "Visual timeline showing playback progress and marker positions",
+    "longPressJump": "Support for long-press quick jump with stepped fast-forward functionality"
+  },
+  "author": {
+    "projectName": "Project Name",
+    "version": "Version",
+    "techStack": "Tech Stack",
+    "github": "GitHub"
+  },
+  "errors": {
+    "invalidVideoFormat": "Please select a valid video file format (MP4, WebM, OGG, AVI, MOV, WMV, MKV, 3GP)",
+    "fileType": "File Type",
+    "fileExtension": "File Extension"
+  }
+} 

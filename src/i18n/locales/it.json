@@ -1,0 +1,115 @@
+{
+  "common": {
+    "loading": "Caricamento...",
+    "close": "Chiudi",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "submit": "Invia",
+    "report": "Segnala"
+  },
+  "app": {
+    "title": "RaceAna - Strumento di Analisi Racing",
+    "welcome": "Benvenuto in RaceAna",
+    "welcomeDescription": "Seleziona o inserisci le sorgenti video qui sotto per iniziare l'analisi. Puoi caricare file video locali o inserire URL di YouTube.",
+    "supportedFormats": "Formati video supportati: MP4, WebM, OGG, AVI, MOV, WMV",
+    "youCanAlsoEnter": "Puoi anche inserire URL di YouTube o percorsi di file locali"
+  },
+  "video": {
+    "selectSource": "Seleziona Sorgente Video",
+    "videoPathOrYouTube": "Percorso video o URL YouTube",
+    "load": "Carica",
+    "changeVideo": "Cambia Video",
+    "leftVideo": "Video Sinistro",
+    "rightVideo": "Video Destro",
+    "myRecording": "La Mia Registrazione",
+    "expertRecording": "Registrazione Esperto",
+    "localFile": "File Locale",
+    "youtubeVideo": "Video YouTube",
+    "pleaseSelectVideoSource": "Seleziona sorgente video",
+    "left": "Sinistra",
+    "right": "Destra",
+    "video": "Video",
+    "myRecordingSource": "Sorgente Mia Registrazione",
+    "expertRecordingSource": "Sorgente Registrazione Esperto",
+    "enterLocalPathOrYouTube": "Inserisci percorso file locale o URL YouTube",
+    "loaded": "Caricato"
+  },
+  "controls": {
+    "play": "Riproduci",
+    "pause": "Pausa",
+    "stepForward": "Avanti Frame",
+    "stepBackward": "Indietro Frame",
+    "jumpForward": "Salta Avanti",
+    "jumpBackward": "Salta Indietro",
+    "syncMode": "Modalità Sincronizzata",
+    "independentMode": "Modalità Indipendente",
+    "playbackControl": "Controllo Riproduzione",
+    "frameForward": "Frame Avanti",
+    "frameBackward": "Frame Indietro",
+    "playbackMode": "Modalità Riproduzione",
+    "syncPlayback": "Riproduzione Sincronizzata",
+    "independentPlayback": "Riproduzione Indipendente",
+    "clearData": "Cancella Dati",
+    "clearAllSavedData": "Cancella tutti i dati salvati"
+  },
+  "markers": {
+    "setMarker": "Imposta Marker",
+    "jumpToMarker": "Salta al Marker",
+    "syncJump": "Salto Sincronizzato",
+    "marker": "Marker",
+    "time": "Tempo",
+    "setMarkerAtCurrentTime": "Imposta Marker:",
+    "markerManagement": "Gestione Marker",
+    "select": "Seleziona",
+    "jump": "Salta",
+    "syncJumpToMarker": "Salta ai punti temporali del marker su entrambi i lati sinistro e destro simultaneamente",
+    "noMarkersAdded": "Nessun marker aggiunto ancora",
+    "selected": "Selezionato",
+    "timeFormat": "MM:SS",
+    "notSet": "Non Impostato"
+  },
+  "help": {
+    "title": "Guida Utente",
+    "shortcuts": "Scorciatoie da Tastiera",
+    "globalControls": "Controlli Globali",
+    "leftVideoControls": "Controlli Video Sinistro",
+    "rightVideoControls": "Controlli Video Destro",
+    "markerControls": "Controlli Marker",
+    "features": "Funzionalità Principali",
+    "authorInfo": "Informazioni Autore",
+    "bugReport": "Segnalazione Bug",
+    "reportDescription": "Se riscontri problemi durante l'uso o hai suggerimenti per le funzionalità, segnalaceli tramite GitHub Issues!",
+    "reportButton": "Segnala Problema"
+  },
+  "shortcuts": {
+    "playPause": "Riproduci/Pausa",
+    "stepForward": "Avanti Frame",
+    "stepBackward": "Indietro Frame",
+    "fastForward": "Avanti Veloce 5s",
+    "rewind": "Riavvolgi 5s",
+    "setMarkers": "Imposta Marker 1-5",
+    "jumpToMarker": "Salta al Marker",
+    "syncJump": "Salto Sincronizzato"
+  },
+  "features": {
+    "localAndYouTube": "Supporto per file video locali e caricamento video YouTube",
+    "syncOrIndependent": "I video sinistro e destro possono essere controllati sincronamente o indipendentemente",
+    "frameControl": "Controllo preciso frame per frame per l'analisi dettagliata delle azioni",
+    "markerSystem": "Sistema di marker per contrassegnare punti temporali importanti e navigazione rapida",
+    "visualTimeline": "Timeline visiva che mostra il progresso di riproduzione e le posizioni dei marker",
+    "longPressJump": "Supporto per salto rapido con pressione prolungata e funzionalità di avanzamento veloce a gradini"
+  },
+  "author": {
+    "projectName": "Nome Progetto",
+    "version": "Versione",
+    "techStack": "Stack Tecnologico",
+    "github": "GitHub"
+  },
+  "errors": {
+    "invalidVideoFormat": "Seleziona un formato file video valido (MP4, WebM, OGG, AVI, MOV, WMV, MKV, 3GP)",
+    "fileType": "Tipo File",
+    "fileExtension": "Estensione File"
+  }
+} 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Play, Pause, SkipBack, SkipForward, Trash2, Link, Unlink, Edit3 } from 'lucide-react'
 import { VideoSource, Marker } from '../types'
 
@@ -43,6 +44,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   selectedMarker,
   onSelectedMarkerChange
 }) => {
+  const { t } = useTranslation()
   const [leftVideoUrl, setLeftVideoUrl] = useState('')
   const [rightVideoUrl, setRightVideoUrl] = useState('')
   const [editingMarker, setEditingMarker] = useState<{id: number, side: 'left' | 'right', time: string} | null>(null)
@@ -68,7 +70,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     const videoSource: VideoSource = {
       type: url.includes('youtube.com') || url.includes('youtu.be') ? 'youtube' : 'local',
       url: url.trim(),
-      title: `影片 ${side === 'left' ? '左' : '右'}`
+      title: `${t('video.video')} ${side === 'left' ? t('video.left') : t('video.right')}`
     }
 
     if (side === 'left') {
@@ -106,11 +108,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       {/* 影片來源設定 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <h3 className="text-base font-semibold mb-2 text-gray-800">我的錄影來源</h3>
+          <h3 className="text-base font-semibold mb-2 text-gray-800">{t('video.myRecordingSource')}</h3>
           <div className="flex space-x-2">
             <input
               type="text"
-              placeholder="輸入本地檔案路徑或 YouTube 網址"
+              placeholder={t('video.enterLocalPathOrYouTube')}
               value={leftVideoUrl}
               onChange={(e) => setLeftVideoUrl(e.target.value)}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
@@ -119,22 +121,22 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
               onClick={() => handleVideoSubmit('left')}
               className="px-3 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
             >
-              載入
+              {t('video.load')}
             </button>
           </div>
           {leftVideo && (
             <div className="mt-1 text-xs text-gray-600">
-              已載入: {leftVideo.title}
+              {t('video.loaded')}: {leftVideo.title}
             </div>
           )}
         </div>
 
         <div>
-          <h3 className="text-base font-semibold mb-2 text-gray-800">專家錄影來源</h3>
+          <h3 className="text-base font-semibold mb-2 text-gray-800">{t('video.expertRecordingSource')}</h3>
           <div className="flex space-x-2">
             <input
               type="text"
-              placeholder="輸入本地檔案路徑或 YouTube 網址"
+              placeholder={t('video.enterLocalPathOrYouTube')}
               value={rightVideoUrl}
               onChange={(e) => setRightVideoUrl(e.target.value)}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
@@ -143,12 +145,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
               onClick={() => handleVideoSubmit('right')}
               className="px-3 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
             >
-              載入
+              {t('video.load')}
             </button>
           </div>
           {rightVideo && (
             <div className="mt-1 text-xs text-gray-600">
-              已載入: {rightVideo.title}
+              {t('video.loaded')}: {rightVideo.title}
             </div>
           )}
         </div>
@@ -157,7 +159,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       {/* 播放控制 */}
       <div className="border-t pt-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-semibold text-gray-800">播放控制</h3>
+          <h3 className="text-base font-semibold text-gray-800">{t('controls.playbackControl')}</h3>
           <button
             onClick={() => onSyncModeChange(!syncMode)}
             className={`flex items-center space-x-2 px-3 py-1.5 rounded-md text-sm ${
@@ -167,7 +169,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             }`}
           >
             {syncMode ? <Link size={14} /> : <Unlink size={14} />}
-            <span>{syncMode ? '同步模式' : '獨立模式'}</span>
+            <span>{syncMode ? t('controls.syncMode') : t('controls.independentMode')}</span>
           </button>
         </div>
 
@@ -198,7 +200,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <div className="mt-3 space-y-3">
           <div>
             <div className="flex justify-between text-xs text-gray-600 mb-1">
-              <span>左側影片: {formatTime(leftCurrentTime)} / {formatTime(leftDuration)}</span>
+              <span>{t('video.leftVideo')}: {formatTime(leftCurrentTime)} / {formatTime(leftDuration)}</span>
             </div>
             <input
               type="range"
@@ -212,7 +214,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           
           <div>
             <div className="flex justify-between text-xs text-gray-600 mb-1">
-              <span>右側影片: {formatTime(rightCurrentTime)} / {formatTime(rightDuration)}</span>
+              <span>{t('video.rightVideo')}: {formatTime(rightCurrentTime)} / {formatTime(rightDuration)}</span>
             </div>
             <input
               type="range"
@@ -228,7 +230,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
 
       {/* 標籤管理 */}
       <div className="border-t pt-4">
-        <h3 className="text-base font-semibold mb-3 text-gray-800">標籤管理</h3>
+        <h3 className="text-base font-semibold mb-3 text-gray-800">{t('markers.markerManagement')}</h3>
         
         {/* 標籤列表 - 改為網格佈局 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -254,7 +256,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                     onClick={() => onSelectedMarkerChange(marker.label)}
                     className="text-xs text-gray-600 hover:text-gray-800"
                   >
-                    {selectedMarker === marker.label ? '已選中' : '選中'}
+                    {selectedMarker === marker.label ? t('markers.selected') : t('markers.select')}
                   </button>
                 </div>
                 <button
@@ -268,33 +270,33 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
               <div className="grid grid-cols-2 gap-2 text-xs">
                 {/* 左側時間 */}
                 <div>
-                  <div className="text-xs font-medium text-gray-700 mb-1">左側時間</div>
+                  <div className="text-xs font-medium text-gray-700 mb-1">{t('video.left')} {t('markers.time')}</div>
                   {editingMarker?.id === marker.id && editingMarker.side === 'left' ? (
                     <div className="flex space-x-1">
                       <input
                         type="text"
                         value={editingMarker.time}
                         onChange={(e) => setEditingMarker({...editingMarker, time: e.target.value})}
-                        placeholder="分:秒"
+                        placeholder={t('markers.timeFormat')}
                         className="flex-1 px-1 py-0.5 border border-gray-300 rounded text-xs"
                       />
                       <button
                         onClick={handleSaveMarkerEdit}
                         className="px-1 py-0.5 bg-green-500 text-white rounded text-xs hover:bg-green-600"
                       >
-                        保存
+                        {t('common.save')}
                       </button>
                       <button
                         onClick={handleCancelMarkerEdit}
                         className="px-1 py-0.5 bg-gray-500 text-white rounded text-xs hover:bg-gray-600"
                       >
-                        取消
+                        {t('common.cancel')}
                       </button>
                     </div>
                   ) : (
                     <div className="flex items-center space-x-1">
                       <span className="text-xs text-gray-600">
-                        {marker.leftTime !== undefined ? formatTime(marker.leftTime) : '未設置'}
+                        {marker.leftTime !== undefined ? formatTime(marker.leftTime) : t('markers.notSet')}
                       </span>
                       <button
                         onClick={() => handleEditMarker(marker, 'left')}
@@ -308,33 +310,33 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                 
                 {/* 右側時間 */}
                 <div>
-                  <div className="text-xs font-medium text-gray-700 mb-1">右側時間</div>
+                  <div className="text-xs font-medium text-gray-700 mb-1">{t('video.right')} {t('markers.time')}</div>
                   {editingMarker?.id === marker.id && editingMarker.side === 'right' ? (
                     <div className="flex space-x-1">
                       <input
                         type="text"
                         value={editingMarker.time}
                         onChange={(e) => setEditingMarker({...editingMarker, time: e.target.value})}
-                        placeholder="分:秒"
+                        placeholder={t('markers.timeFormat')}
                         className="flex-1 px-1 py-0.5 border border-gray-300 rounded text-xs"
                       />
                       <button
                         onClick={handleSaveMarkerEdit}
                         className="px-1 py-0.5 bg-green-500 text-white rounded text-xs hover:bg-green-600"
                       >
-                        保存
+                        {t('common.save')}
                       </button>
                       <button
                         onClick={handleCancelMarkerEdit}
                         className="px-1 py-0.5 bg-gray-500 text-white rounded text-xs hover:bg-gray-600"
                       >
-                        取消
+                        {t('common.cancel')}
                       </button>
                     </div>
                   ) : (
                     <div className="flex items-center space-x-1">
                       <span className="text-xs text-gray-600">
-                        {marker.rightTime !== undefined ? formatTime(marker.rightTime) : '未設置'}
+                        {marker.rightTime !== undefined ? formatTime(marker.rightTime) : t('markers.notSet')}
                       </span>
                       <button
                         onClick={() => handleEditMarker(marker, 'right')}
@@ -354,14 +356,14 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                   disabled={marker.leftTime === undefined}
                   className="px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  跳轉左側
+                  {t('markers.jump')} {t('video.left')}
                 </button>
                 <button
                   onClick={() => onJumpToMarker(marker, 'right')}
                   disabled={marker.rightTime === undefined}
                   className="px-1.5 py-0.5 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  跳轉右側
+                  {t('markers.jump')} {t('video.right')}
                 </button>
               </div>
             </div>
@@ -369,7 +371,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           
           {markers.length === 0 && (
             <div className="col-span-full text-center text-gray-500 py-3 text-sm">
-              尚未新增任何標籤
+              {t('markers.noMarkersAdded')}
             </div>
           )}
         </div>

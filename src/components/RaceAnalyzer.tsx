@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import VideoPlayer, { VideoPlayerHandle } from './VideoPlayer'
 import { VideoSource, Marker } from '../types'
 import { Pause, Play, SkipBack, SkipForward, Upload } from 'lucide-react'
@@ -36,6 +37,7 @@ const buildLabelsParam = (markers: Marker[], side: 'left' | 'right') => {
 }
 
 const RaceAnalyzer: React.FC = () => {
+  const { t } = useTranslation()
   const [leftVideo, setLeftVideo] = useState<VideoSource | null>(null)
   const [rightVideo, setRightVideo] = useState<VideoSource | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -993,15 +995,15 @@ const RaceAnalyzer: React.FC = () => {
       {/* 初始介面 */}
       {!leftVideo && !rightVideo && (
         <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 shadow-neon p-4">
-          <h2 className="text-lg font-semibold mb-3 text-cyber-blue">歡迎使用 RaceAna</h2>
+          <h2 className="text-lg font-semibold mb-3 text-cyber-blue">{t('app.welcome')}</h2>
           <p className="text-sm text-cyber-blue/80 mb-4">
-            請在下方選擇或輸入影片來源開始分析。您可以載入本地影片檔案或輸入 YouTube 網址。
+            {t('app.welcomeDescription')}
           </p>
           
           <div className="p-2 bg-cyber-dark/50 rounded-lg border border-cyber-blue/20">
             <p className="text-xs text-cyber-blue/70">
-              支援的影片格式：MP4, WebM, OGG, AVI, MOV, WMV<br/>
-              您也可以輸入 YouTube 網址或本地檔案路徑
+              {t('app.supportedFormats')}<br/>
+              {t('app.youCanAlsoEnter')}
             </p>
           </div>
         </div>
@@ -1013,7 +1015,7 @@ const RaceAnalyzer: React.FC = () => {
         <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 shadow-neon p-2">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-semibold text-cyber-purple">我的錄影</h3>
+              <h3 className="text-sm font-semibold text-cyber-purple">{t('video.myRecording')}</h3>
               {leftVideo?.title && (
                 <span className="text-xs text-cyber-blue/70 truncate max-w-32" title={leftVideo.title}>
                   - {leftVideo.title}
@@ -1025,9 +1027,9 @@ const RaceAnalyzer: React.FC = () => {
                 <button
                   onClick={() => handleChangeVideo('left')}
                   className="px-2 py-1 text-xs bg-cyber-dark/50 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
-                  title="更換影片"
+                  title={t('video.changeVideo')}
                 >
-                  換影片
+                  {t('video.changeVideo')}
                 </button>
               ) : null}
               {leftBlobInvalid && leftVideo && leftVideo.type === 'local' && (
@@ -1047,7 +1049,7 @@ const RaceAnalyzer: React.FC = () => {
               <div className="flex space-x-1">
                 <input
                   type="text"
-                  placeholder="影片路徑或 YouTube 網址"
+                  placeholder={t('video.videoPathOrYouTube')}
                   value={leftVideoUrl}
                   onChange={(e) => setLeftVideoUrl(e.target.value)}
                   className="flex-1 px-2 py-1 bg-cyber-dark/50 border border-cyber-blue/30 rounded text-xs text-cyber-blue placeholder-cyber-blue/50 focus:outline-none focus:ring-1 focus:ring-cyber-blue focus:border-cyber-blue"
@@ -1056,7 +1058,7 @@ const RaceAnalyzer: React.FC = () => {
                   onClick={() => handleVideoSubmit('left')}
                   className="px-2 py-1 bg-cyber-blue text-white rounded text-xs hover:bg-cyber-purple transition-all duration-300 font-medium"
                 >
-                  載入
+                  {t('video.load')}
                 </button>
                 <button
                   onClick={() => handleFileSelectWithAPI('left')}
@@ -1071,7 +1073,7 @@ const RaceAnalyzer: React.FC = () => {
                     onClick={() => setShowLeftInput(false)}
                     className="px-2 py-1 bg-cyber-dark/50 text-cyber-blue rounded text-xs hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
                   >
-                    取消
+                    {t('common.cancel')}
                   </button>
                 )}
               </div>
@@ -1107,7 +1109,7 @@ const RaceAnalyzer: React.FC = () => {
         <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-orange/20 shadow-neon-orange p-2">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-semibold text-cyber-orange">專家錄影</h3>
+              <h3 className="text-sm font-semibold text-cyber-orange">{t('video.expertRecording')}</h3>
               {rightVideo?.title && (
                 <span className="text-xs text-cyber-orange/70 truncate max-w-32" title={rightVideo.title}>
                   - {rightVideo.title}
@@ -1119,9 +1121,9 @@ const RaceAnalyzer: React.FC = () => {
                 <button
                   onClick={() => handleChangeVideo('right')}
                   className="px-2 py-1 text-xs bg-cyber-dark/50 text-cyber-orange rounded hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300"
-                  title="更換影片"
+                  title={t('video.changeVideo')}
                 >
-                  換影片
+                  {t('video.changeVideo')}
                 </button>
               ) : null}
               {rightBlobInvalid && rightVideo && rightVideo.type === 'local' && (
@@ -1141,16 +1143,16 @@ const RaceAnalyzer: React.FC = () => {
               <div className="flex space-x-1">
                 <input
                   type="text"
-                  placeholder="影片路徑或 YouTube 網址"
+                  placeholder={t('video.videoPathOrYouTube')}
                   value={rightVideoUrl}
                   onChange={(e) => setRightVideoUrl(e.target.value)}
                   className="flex-1 px-2 py-1 bg-cyber-dark/50 border border-cyber-orange/30 rounded text-xs text-cyber-orange placeholder-cyber-orange/50 focus:outline-none focus:ring-1 focus:ring-cyber-orange focus:border-cyber-orange"
                 />
                 <button
                   onClick={() => handleVideoSubmit('right')}
-                  className="px-2 py-1 bg-cyber-orange text-white rounded text-xs hover:bg-cyber-pink transition-all duration-300 font-medium"
+                  className="px-2 py-1 bg-cyber-orange text-white rounded text-xs hover:bg-cyber-orange/80 transition-all duration-300 font-medium"
                 >
-                  載入
+                  {t('video.load')}
                 </button>
                 <button
                   onClick={() => handleFileSelectWithAPI('right')}
@@ -1165,14 +1167,14 @@ const RaceAnalyzer: React.FC = () => {
                     onClick={() => setShowRightInput(false)}
                     className="px-2 py-1 bg-cyber-dark/50 text-cyber-orange rounded text-xs hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300"
                   >
-                    取消
+                    {t('common.cancel')}
                   </button>
                 )}
               </div>
             </div>
           ) : null}
           
-          {/* 隱藏的檔案輸入元素 - 移到條件渲染外部 */}
+          {/* 隱藏的檔案輸入元素 */}
           <input
             ref={rightFileInputRef}
             type="file"
@@ -1202,7 +1204,7 @@ const RaceAnalyzer: React.FC = () => {
       <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <h3 className="text-sm font-semibold text-cyber-blue">播放控制</h3>
+            <h3 className="text-sm font-semibold text-cyber-blue">{t('controls.playbackControl')}</h3>
           </div>
           
           <div className="flex items-center space-x-2">
@@ -1216,7 +1218,7 @@ const RaceAnalyzer: React.FC = () => {
             <button
               onClick={handleStepBackward}
               className="p-1.5 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
-              title="逐幀後退"
+              title={t('controls.frameBackward')}
             >
               <SkipBack size={14} />
             </button>
@@ -1224,14 +1226,14 @@ const RaceAnalyzer: React.FC = () => {
             <button
               onClick={handleStepForward}
               className="p-1.5 bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300"
-              title="逐幀前進"
+              title={t('controls.frameForward')}
             >
               <SkipForward size={14} />
             </button>
           </div>
           
           <div className="flex items-center space-x-2">
-            <span className="text-xs text-cyber-blue/70">播放模式:</span>
+            <span className="text-xs text-cyber-blue/70">{t('controls.playbackMode')}:</span>
             <button
               onClick={() => setSyncMode(!syncMode)}
               className={`px-3 py-1.5 rounded text-xs font-medium transition-all duration-300 ${
@@ -1240,15 +1242,15 @@ const RaceAnalyzer: React.FC = () => {
                   : 'bg-cyber-dark/50 text-cyber-blue/70 border border-cyber-blue/20 hover:bg-cyber-blue/10'
               }`}
             >
-              {syncMode ? '同步播放' : '獨立播放'}
+              {syncMode ? t('controls.syncPlayback') : t('controls.independentPlayback')}
             </button>
             
             <button
               onClick={clearSessionData}
               className="px-3 py-1.5 bg-cyber-dark/50 text-cyber-red/70 rounded text-xs font-medium hover:bg-cyber-red/20 border border-cyber-red/20 transition-all duration-300"
-              title="清除所有保存的資料"
+              title={t('controls.clearAllSavedData')}
             >
-              清除資料
+              {t('controls.clearData')}
             </button>
           </div>
         </div>
@@ -1256,7 +1258,7 @@ const RaceAnalyzer: React.FC = () => {
 
       {/* 標籤管理 - 簡化版 */}
       <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-purple/20 p-2">
-        <h3 className="text-sm font-semibold mb-1 text-cyber-purple">標籤管理</h3>
+        <h3 className="text-sm font-semibold mb-1 text-cyber-purple">{t('markers.markerManagement')}</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-1.5">
           {markers.map((marker) => (
@@ -1281,7 +1283,7 @@ const RaceAnalyzer: React.FC = () => {
                     onClick={() => setSelectedMarker(marker.label)}
                     className="text-xs text-cyber-blue hover:text-cyber-neon transition-colors duration-300"
                   >
-                    {selectedMarker === marker.label ? '✓' : '選'}
+                    {selectedMarker === marker.label ? '✓' : t('markers.select')}
                   </button>
                   <button
                     onClick={() => handleDeleteMarker(marker.id)}
@@ -1295,7 +1297,7 @@ const RaceAnalyzer: React.FC = () => {
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-1">
-                    <span className="text-xs text-cyber-blue/70">左:</span>
+                    <span className="text-xs text-cyber-blue/70">{t('video.left')}:</span>
                     <span className="text-xs text-cyber-blue">
                       {marker.leftTime !== undefined ? formatTime(marker.leftTime) : '-'}
                     </span>
@@ -1304,12 +1306,12 @@ const RaceAnalyzer: React.FC = () => {
                       disabled={marker.leftTime === undefined}
                       className="px-1 py-0.5 text-xs bg-cyber-blue/30 text-cyber-blue rounded hover:bg-cyber-blue/40 disabled:opacity-50 transition-all duration-300"
                     >
-                      跳
+                      {t('markers.jump')}
                     </button>
                   </div>
                   
                   <div className="flex items-center space-x-1">
-                    <span className="text-xs text-cyber-orange/70">右:</span>
+                    <span className="text-xs text-cyber-orange/70">{t('video.right')}:</span>
                     <span className="text-xs text-cyber-orange">
                       {marker.rightTime !== undefined ? formatTime(marker.rightTime) : '-'}
                     </span>
@@ -1318,7 +1320,7 @@ const RaceAnalyzer: React.FC = () => {
                       disabled={marker.rightTime === undefined}
                       className="px-1 py-0.5 text-xs bg-cyber-orange/30 text-cyber-orange rounded hover:bg-cyber-orange/40 disabled:opacity-50 transition-all duration-300"
                     >
-                      跳
+                      {t('markers.jump')}
                     </button>
                   </div>
                 </div>
@@ -1329,9 +1331,9 @@ const RaceAnalyzer: React.FC = () => {
                     onClick={() => handleSyncJumpToMarker(marker)}
                     disabled={marker.leftTime === undefined || marker.rightTime === undefined}
                     className="px-1.5 py-0.5 text-xs bg-cyber-green/90 text-white rounded hover:bg-cyber-green transition-all duration-300"
-                    title="同時跳轉到左右兩邊的標籤時間點"
+                    title={t('markers.syncJumpToMarker')}
                   >
-                    同步跳轉
+                    {t('markers.syncJump')}
                   </button>
                 </div>
               </div>
@@ -1340,7 +1342,7 @@ const RaceAnalyzer: React.FC = () => {
           
           {markers.length === 0 && (
             <div className="col-span-full text-center text-cyber-blue/50 py-1 text-xs">
-              尚未新增任何標籤
+              {t('markers.noMarkersAdded')}
             </div>
           )}
         </div>

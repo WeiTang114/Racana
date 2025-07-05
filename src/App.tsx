@@ -1,10 +1,13 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import RaceAnalyzer from './components/RaceAnalyzer'
 import HelpModal from './components/HelpModal'
+import LanguageSwitcher from './components/LanguageSwitcher'
 import { HelpCircle } from 'lucide-react'
 
 function App() {
   const [showHelp, setShowHelp] = useState(false)
+  const { t } = useTranslation()
 
   return (
     <div className="min-h-screen bg-cyber-gradient">
@@ -13,15 +16,18 @@ function App() {
           <div className="flex justify-between items-center py-2">
             <div className="flex items-center">
               <h1 className="text-xl font-bold text-cyber-blue">RaceAna</h1>
-              <span className="ml-2 text-sm text-cyber-blue/70">賽車分析工具</span>
+              <span className="ml-2 text-sm text-cyber-blue/70">{t('app.title')}</span>
             </div>
-            <button
-              onClick={() => setShowHelp(true)}
-              className="p-1.5 text-cyber-blue hover:text-cyber-neon hover:bg-cyber-blue/10 rounded-full transition-all duration-300"
-              title="使用說明"
-            >
-              <HelpCircle size={18} />
-            </button>
+            <div className="flex items-center space-x-2">
+              <LanguageSwitcher />
+              <button
+                onClick={() => setShowHelp(true)}
+                className="p-1.5 text-cyber-blue hover:text-cyber-neon hover:bg-cyber-blue/10 rounded-full transition-all duration-300"
+                title={t('help.title')}
+              >
+                <HelpCircle size={18} />
+              </button>
+            </div>
           </div>
         </div>
       </header>

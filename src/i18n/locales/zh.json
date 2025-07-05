@@ -1,0 +1,115 @@
+{
+  "common": {
+    "loading": "載入中...",
+    "close": "關閉",
+    "cancel": "取消",
+    "save": "儲存",
+    "delete": "刪除",
+    "edit": "編輯",
+    "submit": "提交",
+    "report": "回報"
+  },
+  "app": {
+    "title": "RaceAna - 賽車分析工具",
+    "welcome": "歡迎使用 RaceAna",
+    "welcomeDescription": "請在下方選擇或輸入影片來源開始分析。您可以載入本地影片檔案或輸入 YouTube 網址。",
+    "supportedFormats": "支援的影片格式：MP4, WebM, OGG, AVI, MOV, WMV",
+    "youCanAlsoEnter": "您也可以輸入 YouTube 網址或本地檔案路徑"
+  },
+  "video": {
+    "selectSource": "選擇影片來源",
+    "videoPathOrYouTube": "影片路徑或 YouTube 網址",
+    "load": "載入",
+    "changeVideo": "更換影片",
+    "leftVideo": "左側影片",
+    "rightVideo": "右側影片",
+    "myRecording": "我的錄影",
+    "expertRecording": "專家錄影",
+    "localFile": "本地檔案",
+    "youtubeVideo": "YouTube 影片",
+    "pleaseSelectVideoSource": "請選擇影片來源",
+    "left": "左",
+    "right": "右",
+    "video": "影片",
+    "myRecordingSource": "我的錄影來源",
+    "expertRecordingSource": "專家錄影來源",
+    "enterLocalPathOrYouTube": "輸入本地檔案路徑或 YouTube 網址",
+    "loaded": "已載入"
+  },
+  "controls": {
+    "play": "播放",
+    "pause": "暫停",
+    "stepForward": "逐幀前進",
+    "stepBackward": "逐幀後退",
+    "jumpForward": "快進",
+    "jumpBackward": "快退",
+    "syncMode": "同步模式",
+    "independentMode": "獨立模式",
+    "playbackControl": "播放控制",
+    "frameForward": "逐幀前進",
+    "frameBackward": "逐幀後退",
+    "playbackMode": "播放模式",
+    "syncPlayback": "同步播放",
+    "independentPlayback": "獨立播放",
+    "clearData": "清除資料",
+    "clearAllSavedData": "清除所有保存的資料"
+  },
+  "markers": {
+    "setMarker": "設置標籤",
+    "jumpToMarker": "跳轉到標籤",
+    "syncJump": "同步跳轉",
+    "marker": "標籤",
+    "time": "時間",
+    "setMarkerAtCurrentTime": "設置標籤：",
+    "markerManagement": "標籤管理",
+    "select": "選",
+    "jump": "跳",
+    "syncJumpToMarker": "同時跳轉到左右兩邊的標籤時間點",
+    "noMarkersAdded": "尚未新增任何標籤",
+    "selected": "已選中",
+    "timeFormat": "分:秒",
+    "notSet": "未設置"
+  },
+  "help": {
+    "title": "使用說明",
+    "shortcuts": "快速鍵說明",
+    "globalControls": "全域控制",
+    "leftVideoControls": "左側影片控制",
+    "rightVideoControls": "右側影片控制",
+    "markerControls": "標籤控制",
+    "features": "主要功能",
+    "authorInfo": "作者資訊",
+    "bugReport": "問題回報",
+    "reportDescription": "如果您在使用過程中遇到任何問題或有功能建議，歡迎透過 GitHub Issues 回報給我們！",
+    "reportButton": "回報問題"
+  },
+  "shortcuts": {
+    "playPause": "播放/暫停",
+    "stepForward": "逐幀前進",
+    "stepBackward": "逐幀後退",
+    "fastForward": "快進 5 秒",
+    "rewind": "快退 5 秒",
+    "setMarkers": "設置標籤 1-5",
+    "jumpToMarker": "跳轉到標籤",
+    "syncJump": "同步跳轉"
+  },
+  "features": {
+    "localAndYouTube": "支援本地影片檔案和 YouTube 影片載入",
+    "syncOrIndependent": "左右影片可同步或獨立播放控制",
+    "frameControl": "精確的逐幀控制，方便分析細節動作",
+    "markerSystem": "標籤系統，可標記重要時間點並快速跳轉",
+    "visualTimeline": "視覺化時間軸，直觀顯示播放進度和標籤位置",
+    "longPressJump": "支援長按快速跳轉，階梯式快進功能"
+  },
+  "author": {
+    "projectName": "專案名稱",
+    "version": "版本",
+    "techStack": "技術棧",
+    "github": "GitHub"
+  },
+  "errors": {
+    "invalidVideoFormat": "請選擇有效的影片檔案格式 (MP4, WebM, OGG, AVI, MOV, WMV, MKV, 3GP)",
+    "fileType": "檔案類型",
+    "fileExtension": "檔案副檔名"
+  }
+} 
