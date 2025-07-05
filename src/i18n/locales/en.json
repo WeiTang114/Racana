@@ -10,8 +10,8 @@
     "report": "Report"
   },
   "app": {
-    "title": "RaceAna - Racing Analysis Tool",
-    "welcome": "Welcome to RaceAna",
+    "title": "Racana - Racing Analysis Tool",
+    "welcome": "Welcome to Racana",
     "welcomeDescription": "Please select or enter video sources below to start analysis. You can load local video files or enter YouTube URLs.",
     "supportedFormats": "Supported video formats: MP4, WebM, OGG, AVI, MOV, WMV",
     "youCanAlsoEnter": "You can also enter YouTube URLs or local file paths"
