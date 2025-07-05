@@ -1,6 +1,6 @@
 {
   "name": "raceana",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "賽車分析應用程式 - 比較和分析賽車錄影",
   "main": "index.js",
   "scripts": {
