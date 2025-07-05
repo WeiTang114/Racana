@@ -184,11 +184,11 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
             <div className="bg-cyber-dark/50 rounded-lg p-4 space-y-2 border border-cyber-purple/20">
               <div className="text-sm">
                 <span className="font-medium text-cyber-purple">{t('author.projectName')}：</span>
-                <span className="text-cyber-blue/80">RaceAna 賽車分析工具</span>
+                <span className="text-cyber-blue/80">Racana 賽車分析工具</span>
               </div>
               <div className="text-sm">
                 <span className="font-medium text-cyber-purple">{t('author.version')}：</span>
-                <span className="text-cyber-blue/80">1.0.0</span>
+                <span className="text-cyber-blue/80">1.0.2</span>
               </div>
               <div className="text-sm">
                 <span className="font-medium text-cyber-purple">{t('author.techStack')}：</span>
@@ -197,12 +197,12 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
               <div className="text-sm">
                 <span className="font-medium text-cyber-purple">{t('author.github')}：</span>
                 <a 
-                  href="https://github.com/WeiTang114/RaceAna" 
+                  href="https://github.com/WeiTang114/Racana" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-cyber-blue hover:text-cyber-neon underline transition-colors duration-300"
                 >
-                  WeiTang114/RaceAna
+                  WeiTang114/Racana
                 </a>
               </div>
             </div>
@@ -219,7 +219,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 {t('help.reportDescription')}
               </p>
               <a 
-                href="https://github.com/WeiTang114/RaceAna/issues/new" 
+                href="https://github.com/WeiTang114/Racana/issues/new" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-4 py-2 bg-cyber-orange text-white rounded-lg hover:bg-cyber-orange/80 transition-all duration-300 text-sm font-medium"

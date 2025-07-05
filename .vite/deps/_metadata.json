@@ -1,0 +1,118 @@
+{
+  "hash": "924feb64",
+  "configHash": "efdb6fd6",
+  "lockfileHash": "8ba10e47",
+  "browserHash": "c84f7623",
+  "optimized": {
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "d459a9c2",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "9c4e2470",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "85977a81",
+      "needsInterop": true
+    },
+    "i18next": {
+      "src": "../../node_modules/i18next/dist/esm/i18next.js",
+      "file": "i18next.js",
+      "fileHash": "5398419a",
+      "needsInterop": false
+    },
+    "react-i18next": {
+      "src": "../../node_modules/react-i18next/dist/es/index.js",
+      "file": "react-i18next.js",
+      "fileHash": "9c1e99f8",
+      "needsInterop": false
+    },
+    "i18next-browser-languagedetector": {
+      "src": "../../node_modules/i18next-browser-languagedetector/dist/esm/i18nextBrowserLanguageDetector.js",
+      "file": "i18next-browser-languagedetector.js",
+      "fileHash": "83eaa31a",
+      "needsInterop": false
+    },
+    "lucide-react": {
+      "src": "../../node_modules/lucide-react/dist/esm/lucide-react.js",
+      "file": "lucide-react.js",
+      "fileHash": "6b36fafe",
+      "needsInterop": false
+    },
+    "react-dom": {
+      "src": "../../node_modules/react-dom/index.js",
+      "file": "react-dom.js",
+      "fileHash": "1f8a5a3d",
+      "needsInterop": true
+    },
+    "react-player": {
+      "src": "../../node_modules/react-player/lib/index.js",
+      "file": "react-player.js",
+      "fileHash": "2227e13e",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "Twitch-A7QCKCYG": {
+      "file": "Twitch-A7QCKCYG.js"
+    },
+    "DailyMotion-W63KGKF2": {
+      "file": "DailyMotion-W63KGKF2.js"
+    },
+    "Mixcloud-U7LHJMCG": {
+      "file": "Mixcloud-U7LHJMCG.js"
+    },
+    "Vidyard-EDAIXY7U": {
+      "file": "Vidyard-EDAIXY7U.js"
+    },
+    "Kaltura-P3ZRTKTZ": {
+      "file": "Kaltura-P3ZRTKTZ.js"
+    },
+    "FilePlayer-ZYJ2XTON": {
+      "file": "FilePlayer-ZYJ2XTON.js"
+    },
+    "Preview-VKETLNT4": {
+      "file": "Preview-VKETLNT4.js"
+    },
+    "YouTube-24HRMLM4": {
+      "file": "YouTube-24HRMLM4.js"
+    },
+    "SoundCloud-2DANYL4J": {
+      "file": "SoundCloud-2DANYL4J.js"
+    },
+    "Vimeo-TBL3IHY6": {
+      "file": "Vimeo-TBL3IHY6.js"
+    },
+    "Mux-7AUZ2MZL": {
+      "file": "Mux-7AUZ2MZL.js"
+    },
+    "Facebook-LQSUV3YP": {
+      "file": "Facebook-LQSUV3YP.js"
+    },
+    "Streamable-FV23C5A4": {
+      "file": "Streamable-FV23C5A4.js"
+    },
+    "Wistia-2T5UVA6A": {
+      "file": "Wistia-2T5UVA6A.js"
+    },
+    "chunk-ZQPDIFVJ": {
+      "file": "chunk-ZQPDIFVJ.js"
+    },
+    "chunk-ZZLBGYQN": {
+      "file": "chunk-ZZLBGYQN.js"
+    },
+    "chunk-65KY755N": {
+      "file": "chunk-65KY755N.js"
+    },
+    "chunk-V4OQ3NZ2": {
+      "file": "chunk-V4OQ3NZ2.js"
+    }
+  }
+}
