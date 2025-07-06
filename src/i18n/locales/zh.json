@@ -140,6 +140,8 @@
     "includeCurrentTime": "包含目前播放時間",
     "generatedLink": "產生的連結",
     "copy": "複製",
-    "copied": "已複製！"
+    "copied": "已複製！",
+    "copyFailed": "複製失敗",
+    "manualCopy": "請手動複製以下連結"
   }
 } 

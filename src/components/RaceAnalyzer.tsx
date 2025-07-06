@@ -68,6 +68,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
   const [showRightInput, setShowRightInput] = useState(false)
   const [isMobile, setIsMobile] = useState(false) // 新增 isMobile 狀態
   const [playbackRate, setPlaybackRate] = useState(1) // 播放速度狀態
+  const [isInitialized, setIsInitialized] = useState(false) // 新增初始化標誌
   
   // 保存原始檔案資訊，用於重新載入
   const [leftOriginalFile, setLeftOriginalFile] = useState<File | null>(null)
@@ -107,6 +108,16 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
       setIsMobile(true);
     }
   }, []);
+
+  // 設置初始化標誌
+  useEffect(() => {
+    // 延遲一點時間確保 App.tsx 已經載入完狀態
+    const timer = setTimeout(() => {
+      setIsInitialized(true)
+    }, 100)
+    
+    return () => clearTimeout(timer)
+  }, [])
 
   // 定期檢測 blob URL 有效性
   useEffect(() => {
@@ -154,8 +165,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
 
   // 長按處理函數
   const handleLongPress = (key: string, _action: () => void) => {
-    console.log(`開始長按檢測: ${key}`)
-    
     // 階段式長按邏輯
     const stages = [
       { time: 500, jump: 1, description: '0.5秒→快進1秒' },
@@ -165,7 +174,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
     ]
     
     const executeAction = (jumpSeconds: number) => {
-      console.log(`執行跳轉: ${jumpSeconds}秒`)
       // 根據跳轉秒數執行不同的動作
       if (jumpSeconds === 1) {
         // 0.5秒和1秒時使用逐幀動作
@@ -222,18 +230,14 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
     stages.forEach((stage, index) => {
       const timeoutId = window.setTimeout(() => {
         if (pressedKeysRef.current.has(key)) {
-          console.log(`階段 ${index + 1}: ${stage.description}`)
           executeAction(stage.jump)
           
           // 如果是第4個階段（2秒），立即開始持續跳轉
           if (index === 3) {
-            console.log(`開始持續跳轉: 每秒5秒`)
             const repeatTimeoutId = window.setInterval(() => {
               if (pressedKeysRef.current.has(key)) {
-                console.log(`持續跳轉: 5秒`)
                 executeAction(5)
               } else {
-                console.log(`停止持續跳轉`)
                 clearInterval(repeatTimeoutId)
                 longPressTimeoutsRef.current.delete(`${key}_continuous`)
               }
@@ -250,8 +254,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
 
   // 清理長按計時器
   const clearLongPress = (key: string) => {
-    console.log(`清理長按: ${key}`)
-    
     // 清理所有階段的計時器
     for (let i = 0; i < 4; i++) {
       const timeoutId = longPressTimeoutsRef.current.get(`${key}_stage_${i}`)
@@ -389,13 +391,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
       const fileExtension = file.name.toLowerCase().split('.').pop()
       const supportedExtensions = ['mp4', 'webm', 'ogg', 'avi', 'mov', 'wmv', 'mkv', '3gp', '3g2']
       
-      console.log('檔案資訊:', {
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        extension: fileExtension
-      })
-      
       if (!videoTypes.includes(file.type) && !supportedExtensions.includes(fileExtension || '')) {
         alert(`請選擇有效的影片檔案格式 (MP4, WebM, OGG, AVI, MOV, WMV, MKV, 3GP)\n\n檔案類型: ${file.type}\n檔案副檔名: ${fileExtension}`)
         return
@@ -455,7 +450,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
         }
         return
       } catch (error) {
-        console.error('使用檔案句柄重新載入失敗:', error)
         // 如果檔案句柄失效，清除它
         if (side === 'left') {
           setLeftFileHandle(null)
@@ -484,7 +478,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
       }
     } else {
       // 無法重新載入時，自動觸發檔案選擇器
-      console.log(`無法重新載入 ${side} 側檔案，觸發檔案選擇器`)
       if (side === 'left') {
         setLeftOriginalFile(null)
         setLeftBlobInvalid(false)
@@ -701,8 +694,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
     }
   }
 
-
-
   // 鍵盤快速鍵
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -746,7 +737,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
           break
         case 's': // 左影片播放/暫停
           event.preventDefault()
-          console.log('S 按鍵被按下，當前 leftIsPlaying:', leftIsPlaying, 'syncMode:', syncMode)
           handleLeftPlayPause()
           break
         case 'j': // 右影片逐幀後退
@@ -763,7 +753,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
           break
         case 'k': // 右影片播放/暫停
           event.preventDefault()
-          console.log('K 按鍵被按下，當前 rightIsPlaying:', rightIsPlaying, 'syncMode:', syncMode)
           handleRightPlayPause()
           break
         case ' ': // 空白鍵：兩邊一起播放/暫停
@@ -836,7 +825,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
     try {
       // 檢查瀏覽器是否支援 File System Access API
       if (!('showOpenFilePicker' in window)) {
-        console.log('瀏覽器不支援 File System Access API，使用傳統檔案選擇器')
         handleFileSelect(side)
         return
       }
@@ -867,13 +855,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
       const fileExtension = file.name.toLowerCase().split('.').pop()
       const supportedExtensions = ['mp4', 'webm', 'ogg', 'avi', 'mov', 'wmv', 'mkv', '3gp', '3g2']
       
-      console.log('檔案資訊 (API):', {
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        extension: fileExtension
-      })
-      
       if (!videoTypes.includes(file.type) && !supportedExtensions.includes(fileExtension || '')) {
         alert(`請選擇有效的影片檔案格式 (MP4, WebM, OGG, AVI, MOV, WMV, MKV, 3GP)\n\n檔案類型: ${file.type}\n檔案副檔名: ${fileExtension}`)
         return
@@ -903,7 +884,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
         setShowRightInput(false)
       }
     } catch (error) {
-      console.error('檔案選擇失敗:', error)
       // 如果 File System Access API 失敗，回退到傳統檔案選擇器
       handleFileSelect(side)
     }
@@ -911,20 +891,45 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
 
   // 狀態變動時自動更新網址參數
   useEffect(() => {
+    // 只有在初始化完成後才更新 URL
+    if (!isInitialized) {
+      return
+    }
+    
     // 只針對 YouTube 影片同步網址
-    const leftId = leftVideo && leftVideo.type === 'youtube' ? (leftVideo.url.match(/[?&]v=([^&]+)/)?.[1] || '') : ''
-    const rightId = rightVideo && rightVideo.type === 'youtube' ? (rightVideo.url.match(/[?&]v=([^&]+)/)?.[1] || '') : ''
+    const extractYouTubeId = (url: string) => {
+      // 處理 youtube.com 格式: https://www.youtube.com/watch?v=VIDEO_ID
+      const youtubeMatch = url.match(/[?&]v=([^&]+)/)
+      if (youtubeMatch) return youtubeMatch[1]
+      
+      // 處理 youtu.be 格式: https://youtu.be/VIDEO_ID
+      const youtuBeMatch = url.match(/youtu\.be\/([^?&]+)/)
+      if (youtuBeMatch) return youtuBeMatch[1]
+      
+      return ''
+    }
+    
+    const leftId = leftVideo && leftVideo.type === 'youtube' ? extractYouTubeId(leftVideo.url) : ''
+    const rightId = rightVideo && rightVideo.type === 'youtube' ? extractYouTubeId(rightVideo.url) : ''
     const leftLabels = buildLabelsParam(markers, 'left')
     const rightLabels = buildLabelsParam(markers, 'right')
     const params = new URLSearchParams(location.search)
+    
+    // 清除舊的參數（但保留時間參數）
+    params.delete('left')
+    params.delete('right')
+    params.delete('leftLabels')
+    params.delete('rightLabels')
+    
+    // 設置新的參數
     if (leftId) params.set('left', leftId)
     if (rightId) params.set('right', rightId)
     if (leftLabels) params.set('leftLabels', leftLabels)
     if (rightLabels) params.set('rightLabels', rightLabels)
+    
     const newUrl = location.pathname + (params.toString() ? `?${params.toString()}` : '')
-    console.log('RaceAnalyzer updating URL:', { leftId, rightId, newUrl }) // 添加除錯日誌
     navigate(newUrl)
-  }, [leftVideo, rightVideo, markers, location.search, location.pathname, navigate])
+  }, [leftVideo, rightVideo, markers, location.search, location.pathname, navigate, isInitialized])
 
   return (
     <div className="space-y-2">
@@ -963,7 +968,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                 <button
                   onClick={() => handleChangeVideo('left')}
                   className={`bg-cyber-dark/50 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
-                  title={t('video.changeVideo')}
                 >
                   {isMobile ? t('video.mobile.changeVideo') : t('video.changeVideo')}
                 </button>
@@ -972,7 +976,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                 <button
                   onClick={() => handleReloadFile('left')}
                   className={`rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
-                  title="檔案載入失敗，點擊重新選擇檔案"
                 >
                   {isMobile ? t('video.mobile.reloadFile') : '重新選擇'}
                 </button>
@@ -999,7 +1002,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                 <button
                   onClick={() => handleFileSelectWithAPI('left')}
                   className="px-2 py-1 bg-cyber-green text-white rounded text-xs hover:bg-cyber-blue transition-all duration-300 flex items-center relative z-10 font-medium"
-                  title="選擇本地影片檔案"
                   style={{ pointerEvents: 'auto' }}
                 >
                   <Upload size={12} />
@@ -1063,7 +1065,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                 <button
                   onClick={() => handleChangeVideo('right')}
                   className={`bg-cyber-dark/50 text-cyber-orange rounded hover:bg-cyber-orange/20 border border-cyber-orange/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
-                  title={t('video.changeVideo')}
                 >
                   {isMobile ? t('video.mobile.changeVideo') : t('video.changeVideo')}
                 </button>
@@ -1072,7 +1073,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                 <button
                   onClick={() => handleReloadFile('right')}
                   className={`rounded hover:bg-cyber-red/20 bg-cyber-red/10 text-cyber-red border border-cyber-red/30 transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
-                  title="檔案載入失敗，點擊重新選擇檔案"
                 >
                   {isMobile ? t('video.mobile.reloadFile') : '重新選擇'}
                 </button>
@@ -1099,7 +1099,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                 <button
                   onClick={() => handleFileSelectWithAPI('right')}
                   className="px-2 py-1 bg-cyber-green text-white rounded text-xs hover:bg-cyber-orange transition-all duration-300 flex items-center relative z-10 font-medium"
-                  title="選擇本地影片檔案"
                   style={{ pointerEvents: 'auto' }}
                 >
                   <Upload size={12} />
@@ -1165,7 +1164,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
             <button
               onClick={handleStepBackward}
               className={`bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300 ${isMobile ? 'p-1' : 'p-1.5'}`}
-              title={t('controls.frameBackward')}
             >
               <SkipBack size={isMobile ? 12 : 14} />
             </button>
@@ -1173,7 +1171,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
             <button
               onClick={handleStepForward}
               className={`bg-cyber-dark/70 text-cyber-blue rounded hover:bg-cyber-blue/20 border border-cyber-blue/30 transition-all duration-300 ${isMobile ? 'p-1' : 'p-1.5'}`}
-              title={t('controls.frameForward')}
             >
               <SkipForward size={isMobile ? 12 : 14} />
             </button>
@@ -1203,7 +1200,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
             <button
               onClick={clearSessionData}
               className={`bg-cyber-dark/50 text-cyber-red/70 rounded font-medium hover:bg-cyber-red/20 border border-cyber-red/20 transition-all duration-300 ${isMobile ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-xs'}`}
-              title={t('controls.clearAllSavedData')}
             >
               {isMobile ? t('controls.mobile.clearData') : t('controls.clearData')}
             </button>
@@ -1286,6 +1282,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                     onClick={() => handleSyncJumpToMarker(marker)}
                     disabled={marker.leftTime === undefined || marker.rightTime === undefined}
                     className={`bg-cyber-green/90 text-white rounded hover:bg-cyber-green transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-1.5 py-0.5 text-xs'}`}
+                  >
                     title={t('markers.syncJumpToMarker')}
                   >
                     {isMobile ? t('markers.mobile.syncJump') : t('markers.syncJump')}

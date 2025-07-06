@@ -90,11 +90,17 @@ function App() {
 
   // 將狀態保存到 Session Storage
   useEffect(() => {
-    if (leftVideo) saveToSession('leftVideo', leftVideo)
+    if (leftVideo) {
+      console.log('App - Left video updated:', leftVideo)
+      saveToSession('leftVideo', leftVideo)
+    }
   }, [leftVideo])
 
   useEffect(() => {
-    if (rightVideo) saveToSession('rightVideo', rightVideo)
+    if (rightVideo) {
+      console.log('App - Right video updated:', rightVideo)
+      saveToSession('rightVideo', rightVideo)
+    }
   }, [rightVideo])
 
   useEffect(() => {

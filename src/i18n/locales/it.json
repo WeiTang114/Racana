@@ -140,6 +140,8 @@
     "includeCurrentTime": "Includi tempo di riproduzione corrente",
     "generatedLink": "Link Generato",
     "copy": "Copia",
-    "copied": "Copiato!"
+    "copied": "Copiato!",
+    "copyFailed": "Copia fallita",
+    "manualCopy": "Copia manualmente il seguente link"
   }
 } 

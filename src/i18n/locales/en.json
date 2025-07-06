@@ -140,6 +140,8 @@
     "includeCurrentTime": "Include current playback time",
     "generatedLink": "Generated Link",
     "copy": "Copy",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "copyFailed": "Copy failed",
+    "manualCopy": "Please manually copy the following link"
   }
 } 

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { X, Share2, Clipboard, ClipboardCheck } from 'lucide-react'
 import { VideoSource, Marker } from '../types'
@@ -27,15 +27,34 @@ const ShareModal: React.FC<ShareModalProps> = ({
   const [includeTime, setIncludeTime] = useState(true)
   const [copied, setCopied] = useState(false)
 
+  // 當彈窗打開時強制重新計算
+  const [forceUpdate, setForceUpdate] = useState(0)
+  
+  useEffect(() => {
+    if (isOpen) {
+      setForceUpdate(prev => prev + 1)
+    }
+  }, [isOpen])
+
   const generatedUrl = useMemo(() => {
     const baseUrl = window.location.origin + window.location.pathname
     const params = new URLSearchParams()
 
     // 提取 YouTube 影片 ID
-    const leftId = leftVideo?.type === 'youtube' ? (leftVideo.url.match(/[?&]v=([^&]+)/)?.[1] || '') : ''
-    const rightId = rightVideo?.type === 'youtube' ? (rightVideo.url.match(/[?&]v=([^&]+)/)?.[1] || '') : ''
-
-    console.log('Extracting video IDs:', { leftId, rightId, leftVideo, rightVideo }) // 添加除錯日誌
+    const extractYouTubeId = (url: string) => {
+      // 處理 youtube.com 格式: https://www.youtube.com/watch?v=VIDEO_ID
+      const youtubeMatch = url.match(/[?&]v=([^&]+)/)
+      if (youtubeMatch) return youtubeMatch[1]
+      
+      // 處理 youtu.be 格式: https://youtu.be/VIDEO_ID
+      const youtuBeMatch = url.match(/youtu\.be\/([^?&]+)/)
+      if (youtuBeMatch) return youtuBeMatch[1]
+      
+      return ''
+    }
+    
+    const leftId = leftVideo?.type === 'youtube' ? extractYouTubeId(leftVideo.url) : ''
+    const rightId = rightVideo?.type === 'youtube' ? extractYouTubeId(rightVideo.url) : ''
 
     // 設置影片 ID 參數
     if (leftId) params.set('left', leftId)
@@ -67,15 +86,51 @@ const ShareModal: React.FC<ShareModalProps> = ({
     }
 
     const url = `${baseUrl}?${params.toString()}`
-    console.log('Generated share URL:', url) // 添加除錯日誌
     return url
-  }, [leftVideo, rightVideo, markers, leftTime, rightTime, includeMarkers, includeTime])
+  }, [leftVideo, rightVideo, markers, leftTime, rightTime, includeMarkers, includeTime, isOpen, forceUpdate])
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(generatedUrl).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
+    // 檢查是否支援 Clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(generatedUrl).then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }).catch((err) => {
+        console.warn('Clipboard API 失敗，使用回退方案:', err)
+        fallbackCopy()
+      })
+    } else {
+      // 回退方案：使用傳統的 document.execCommand
+      fallbackCopy()
+    }
+  }
+
+  const fallbackCopy = () => {
+    try {
+      // 創建一個臨時的 textarea 元素
+      const textArea = document.createElement('textarea')
+      textArea.value = generatedUrl
+      textArea.style.position = 'fixed'
+      textArea.style.left = '-999999px'
+      textArea.style.top = '-999999px'
+      document.body.appendChild(textArea)
+      textArea.focus()
+      textArea.select()
+      
+      const successful = document.execCommand('copy')
+      document.body.removeChild(textArea)
+      
+      if (successful) {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      } else {
+        // 如果還是失敗，顯示提示讓用戶手動複製
+        alert(`${t('share.copyFailed')}\n\n${t('share.manualCopy')}:\n${generatedUrl}`)
+      }
+    } catch (err) {
+      console.error('複製失敗:', err)
+      alert(`${t('share.copyFailed')}\n\n${t('share.manualCopy')}:\n${generatedUrl}`)
+    }
   }
 
   if (!isOpen) return null
