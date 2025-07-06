@@ -1147,7 +1147,8 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
 
       {/* 播放控制 - 移到下方 */}
       <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 p-3">
-        <div className={`flex items-center justify-between ${isMobile ? 'flex-col space-y-2' : ''}`}>
+        <div className="flex items-center justify-between">
+          {/* 標題 */}
           <div className="flex items-center space-x-2">
             <h3 className={`font-semibold text-cyber-blue ${isMobile ? 'text-xs' : 'text-sm'}`}>{t('controls.playbackControl')}</h3>
           </div>
