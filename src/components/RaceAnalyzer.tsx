@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import VideoPlayer, { VideoPlayerHandle } from './VideoPlayer'
 import { VideoSource, Marker } from '../types'
-import { Pause, Play, SkipBack, SkipForward, Upload, Zap } from 'lucide-react'
+import { Pause, Play, SkipBack, SkipForward, Upload } from 'lucide-react'
 
 // File System Access API 類型定義
 declare global {
