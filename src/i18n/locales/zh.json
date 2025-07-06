@@ -60,6 +60,8 @@
     "independentPlayback": "獨立播放",
     "clearData": "清除資料",
     "clearAllSavedData": "清除所有保存的資料",
+    "playbackSpeed": "播放速度",
+    "resetSpeed": "重置速度",
     "mobile": {
       "syncPlayback": "同步",
       "independentPlayback": "獨立",

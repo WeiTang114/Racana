@@ -60,6 +60,8 @@
     "independentPlayback": "Riproduzione Indipendente",
     "clearData": "Cancella Dati",
     "clearAllSavedData": "Cancella tutti i dati salvati",
+    "playbackSpeed": "Velocità",
+    "resetSpeed": "Ripristina Velocità",
     "mobile": {
       "syncPlayback": "Sync",
       "independentPlayback": "Indep.",

@@ -8,6 +8,8 @@ export interface VideoPlayerHandle {
   seekTo: (time: number, relative?: boolean) => void
   stepForward: () => void
   stepBackward: () => void
+  setPlaybackRate: (rate: number) => void
+  getPlaybackRate: () => number
 }
 
 interface VideoPlayerProps {
@@ -46,13 +48,14 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   const playerRef = useRef<ReactPlayer>(null)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
+  const [playbackRate, setPlaybackRate] = useState(1)
 
   // 內部播放控制
   const handleInternalPlayPause = () => {
     onPlayPause(!isPlaying)
   }
 
-  // 暴露 seekTo 方法給父層
+  // 暴露方法給父層
   useImperativeHandle(ref, () => ({
     seekTo: (time: number, relative?: boolean) => {
       if (playerRef.current) {
@@ -78,6 +81,15 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
         setCurrentTime(newTime)
         onTimeUpdate(newTime)
       }
+    },
+    setPlaybackRate: (rate: number) => {
+      if (playerRef.current) {
+        setPlaybackRate(rate)
+        // ReactPlayer 會自動處理播放速度
+      }
+    },
+    getPlaybackRate: () => {
+      return playbackRate
     }
   }))
 
@@ -147,6 +159,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
             controls={false} // 關閉預設控制，使用自訂控制
             width="100%"
             height="100%"
+            playbackRate={playbackRate}
             onProgress={handleProgress}
             onDuration={handleDurationChange}
             onPlay={() => {

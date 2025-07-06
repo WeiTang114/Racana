@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import VideoPlayer, { VideoPlayerHandle } from './VideoPlayer'
 import { VideoSource, Marker } from '../types'
-import { Pause, Play, SkipBack, SkipForward, Upload } from 'lucide-react'
+import { Pause, Play, SkipBack, SkipForward, Upload, Zap } from 'lucide-react'
 
 // File System Access API 類型定義
 declare global {
@@ -67,6 +67,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
   const [showLeftInput, setShowLeftInput] = useState(false)
   const [showRightInput, setShowRightInput] = useState(false)
   const [isMobile, setIsMobile] = useState(false) // 新增 isMobile 狀態
+  const [playbackRate, setPlaybackRate] = useState(1) // 播放速度狀態
   
   // 保存原始檔案資訊，用於重新載入
   const [leftOriginalFile, setLeftOriginalFile] = useState<File | null>(null)
@@ -688,6 +689,20 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
     }
   }
 
+  // 播放速度控制
+  const handlePlaybackRateChange = (rate: number) => {
+    setPlaybackRate(rate)
+    // 同時設置兩個播放器的速度
+    if (leftPlayerRef.current) {
+      leftPlayerRef.current.setPlaybackRate(rate)
+    }
+    if (rightPlayerRef.current) {
+      rightPlayerRef.current.setPlaybackRate(rate)
+    }
+  }
+
+
+
   // 鍵盤快速鍵
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -1132,11 +1147,12 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
 
       {/* 播放控制 - 移到下方 */}
       <div className="bg-cyber-light/80 backdrop-blur-sm rounded-lg border border-cyber-blue/20 p-3">
-        <div className="flex items-center justify-between">
+        <div className={`flex items-center justify-between ${isMobile ? 'flex-col space-y-2' : ''}`}>
           <div className="flex items-center space-x-2">
             <h3 className={`font-semibold text-cyber-blue ${isMobile ? 'text-xs' : 'text-sm'}`}>{t('controls.playbackControl')}</h3>
           </div>
           
+          {/* 播放控制按鈕 - 置中 */}
           <div className="flex items-center space-x-2">
             <button
               onClick={handleGlobalPlayPause}
@@ -1162,19 +1178,27 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
             </button>
           </div>
           
-          <div className={`flex items-center space-x-2 ${isMobile ? 'flex-wrap justify-center' : ''}`}>
-            <span className={`text-cyber-blue/70 ${isMobile ? 'text-xs' : 'text-xs'}`}>{t('controls.playbackMode')}:</span>
-            <button
-              onClick={() => setSyncMode(!syncMode)}
-              className={`rounded font-medium transition-all duration-300 ${
-                syncMode 
-                  ? 'bg-cyber-green/30 text-cyber-green border border-cyber-green/30' 
-                  : 'bg-cyber-dark/50 text-cyber-blue/70 border border-cyber-blue/20 hover:bg-cyber-blue/10'
-              } ${isMobile ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-xs'}`}
-            >
-              {syncMode ? (isMobile ? t('controls.mobile.syncPlayback') : t('controls.syncPlayback')) : (isMobile ? t('controls.mobile.independentPlayback') : t('controls.independentPlayback'))}
-            </button>
+          {/* 右側控制區域 */}
+          <div className="flex items-center space-x-2">
+            {/* 播放速度控制 */}
+            <div className="flex items-center space-x-2">
+              <span className={`text-cyber-blue/70 ${isMobile ? 'text-xs' : 'text-xs'}`}>{t('controls.playbackSpeed')}:</span>
+              <select
+                value={playbackRate}
+                onChange={(e) => handlePlaybackRateChange(parseFloat(e.target.value))}
+                className={`bg-cyber-dark/50 text-cyber-blue border border-cyber-blue/30 rounded focus:outline-none focus:ring-1 focus:ring-cyber-blue focus:border-cyber-blue transition-all duration-300 ${isMobile ? 'px-1.5 py-0.5 text-xs' : 'px-2 py-1 text-xs'}`}
+              >
+                <option value={0.25}>0.25x</option>
+                <option value={0.5}>0.5x</option>
+                <option value={0.75}>0.75x</option>
+                <option value={1}>1x</option>
+                <option value={1.25}>1.25x</option>
+                <option value={1.5}>1.5x</option>
+                <option value={2}>2x</option>
+              </select>
+            </div>
             
+            {/* 清除資料按鈕 - 最右邊 */}
             <button
               onClick={clearSessionData}
               className={`bg-cyber-dark/50 text-cyber-red/70 rounded font-medium hover:bg-cyber-red/20 border border-cyber-red/20 transition-all duration-300 ${isMobile ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-xs'}`}
