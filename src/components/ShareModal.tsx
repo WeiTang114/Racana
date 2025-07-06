@@ -27,40 +27,48 @@ const ShareModal: React.FC<ShareModalProps> = ({
   const [includeTime, setIncludeTime] = useState(true)
   const [copied, setCopied] = useState(false)
 
-  const parseLabelsParam = (markers: Marker[], side: 'left' | 'right') => {
-    return markers
-      .map(m => {
-        const time = side === 'left' ? m.leftTime : m.rightTime
-        if (time === undefined) return null
-        return `${m.label}-${time.toFixed(2)}`
-      })
-      .filter(Boolean)
-      .join(',')
-  }
-
   const generatedUrl = useMemo(() => {
     const baseUrl = window.location.origin + window.location.pathname
     const params = new URLSearchParams()
 
+    // 提取 YouTube 影片 ID
     const leftId = leftVideo?.type === 'youtube' ? (leftVideo.url.match(/[?&]v=([^&]+)/)?.[1] || '') : ''
     const rightId = rightVideo?.type === 'youtube' ? (rightVideo.url.match(/[?&]v=([^&]+)/)?.[1] || '') : ''
 
+    console.log('Extracting video IDs:', { leftId, rightId, leftVideo, rightVideo }) // 添加除錯日誌
+
+    // 設置影片 ID 參數
     if (leftId) params.set('left', leftId)
     if (rightId) params.set('right', rightId)
 
+    // 設置標籤參數
     if (includeMarkers && markers.length > 0) {
+      const parseLabelsParam = (markers: Marker[], side: 'left' | 'right') => {
+        return markers
+          .map(m => {
+            const time = side === 'left' ? m.leftTime : m.rightTime
+            if (time === undefined) return null
+            return `${m.label}-${time.toFixed(2)}`
+          })
+          .filter(Boolean)
+          .join(',')
+      }
+      
       const leftLabels = parseLabelsParam(markers, 'left')
       const rightLabels = parseLabelsParam(markers, 'right')
       if (leftLabels) params.set('leftLabels', leftLabels)
       if (rightLabels) params.set('rightLabels', rightLabels)
     }
 
+    // 設置時間參數
     if (includeTime) {
       if (leftVideo && leftTime > 0) params.set('leftStartTime', leftTime.toFixed(2))
       if (rightVideo && rightTime > 0) params.set('rightStartTime', rightTime.toFixed(2))
     }
 
-    return `${baseUrl}?${params.toString()}`
+    const url = `${baseUrl}?${params.toString()}`
+    console.log('Generated share URL:', url) // 添加除錯日誌
+    return url
   }, [leftVideo, rightVideo, markers, leftTime, rightTime, includeMarkers, includeTime])
 
   const handleCopy = () => {

@@ -907,6 +907,7 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
     if (leftLabels) params.set('leftLabels', leftLabels)
     if (rightLabels) params.set('rightLabels', rightLabels)
     const newUrl = location.pathname + (params.toString() ? `?${params.toString()}` : '')
+    console.log('RaceAnalyzer updating URL:', { leftId, rightId, newUrl }) // 添加除錯日誌
     navigate(newUrl)
   }, [leftVideo, rightVideo, markers, location.search, location.pathname, navigate])
 
