@@ -49,8 +49,6 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [playbackRate, setPlaybackRate] = useState(1)
-  const [isLoading, setIsLoading] = useState(true)
-  const [hasError, setHasError] = useState(false)
 
   // 內部播放控制
   const handleInternalPlayPause = () => {
@@ -154,78 +152,54 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
     <div className={`space-y-2 ${isMobile ? 'space-y-1' : ''}`}>
       <div className="relative bg-black rounded-lg overflow-hidden border border-cyber-blue/20" style={{ aspectRatio: '16/9' }}>
         {videoSource ? (
-          <>
-            <ReactPlayer
-              ref={playerRef}
-              url={videoSource.url}
-              playing={isPlaying}
-              controls={false} // 關閉預設控制，使用自訂控制
-              width="100%"
-              height="100%"
-              playbackRate={playbackRate}
-              onProgress={handleProgress}
-              onDuration={handleDurationChange}
-              onPlay={() => {
-                if (!isPlaying) {
-                  onPlayPause(true)
+          <ReactPlayer
+            ref={playerRef}
+            url={videoSource.url}
+            playing={isPlaying}
+            controls={false} // 關閉預設控制，使用自訂控制
+            width="100%"
+            height="100%"
+            playbackRate={playbackRate}
+            onProgress={handleProgress}
+            onDuration={handleDurationChange}
+            onPlay={() => {
+              if (!isPlaying) {
+                onPlayPause(true)
+              }
+            }}
+            onPause={() => {
+              if (isPlaying) {
+                onPlayPause(false)
+                // 暫停時更新父組件的時間
+                const newTime = playerRef.current?.getCurrentTime() || 0
+                setCurrentTime(newTime)
+                onTimeUpdate(newTime)
+              }
+            }}
+            onError={() => {
+              // 錯誤處理已移除
+            }}
+            onReady={() => {
+              if (initialTime && playerRef.current) {
+                playerRef.current.seekTo(initialTime, 'seconds')
+                setCurrentTime(initialTime)
+                onTimeUpdate(initialTime)
+              }
+            }}
+            progressInterval={100}
+            muted={isMobile && side === 'right'} // 在手機版上，右側影片預設靜音
+            config={{
+              youtube: {
+                playerVars: {
+                  // 添加一些 YouTube 播放器變數來改善相容性
+                  origin: window.location.origin,
+                  enablejsapi: 1,
+                  modestbranding: 1,
+                  rel: 0
                 }
-              }}
-              onPause={() => {
-                if (isPlaying) {
-                  onPlayPause(false)
-                  // 暫停時更新父組件的時間
-                  const newTime = playerRef.current?.getCurrentTime() || 0
-                  setCurrentTime(newTime)
-                  onTimeUpdate(newTime)
-                }
-              }}
-              onError={() => {
-                setHasError(true)
-                setIsLoading(false)
-              }}
-              onReady={() => {
-                setIsLoading(false)
-                setHasError(false)
-                if (initialTime && playerRef.current) {
-                  playerRef.current.seekTo(initialTime, 'seconds')
-                  setCurrentTime(initialTime)
-                  onTimeUpdate(initialTime)
-                }
-              }}
-              progressInterval={100}
-              muted={isMobile && side === 'right'} // 在手機版上，右側影片預設靜音
-              config={{
-                youtube: {
-                  playerVars: {
-                    // 添加一些 YouTube 播放器變數來改善相容性
-                    origin: window.location.origin,
-                    enablejsapi: 1,
-                    modestbranding: 1,
-                    rel: 0
-                  }
-                }
-              }}
-            />
-            {/* 載入狀態覆蓋 */}
-            {isLoading && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyber-blue mx-auto mb-2"></div>
-                  <p className="text-sm">載入中...</p>
-                </div>
-              </div>
-            )}
-            {/* 錯誤狀態覆蓋 */}
-            {hasError && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <div className="text-red-400 text-4xl mb-2">⚠️</div>
-                  <p className="text-sm">影片載入失敗</p>
-                  <p className="text-xs text-gray-400 mt-1">請檢查影片連結是否有效</p>
-                </div>
-              </div>
-            )}
-          </>
+              }
+            }}
+          />
         ) : (
           <div className="flex items-center justify-center w-full h-full text-cyber-blue/70">
             <div className="text-center">
