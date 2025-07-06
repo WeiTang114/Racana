@@ -1282,7 +1282,6 @@ const RaceAnalyzer: React.FC<RaceAnalyzerProps> = ({
                     onClick={() => handleSyncJumpToMarker(marker)}
                     disabled={marker.leftTime === undefined || marker.rightTime === undefined}
                     className={`bg-cyber-green/90 text-white rounded hover:bg-cyber-green transition-all duration-300 ${isMobile ? 'px-1 py-0.5 text-xs' : 'px-1.5 py-0.5 text-xs'}`}
-                  >
                     title={t('markers.syncJumpToMarker')}
                   >
                     {isMobile ? t('markers.mobile.syncJump') : t('markers.syncJump')}

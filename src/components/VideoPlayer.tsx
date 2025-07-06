@@ -179,7 +179,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
                   onTimeUpdate(newTime)
                 }
               }}
-              onError={(error) => {
+              onError={() => {
                 setHasError(true)
                 setIsLoading(false)
               }}
